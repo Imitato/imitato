@@ -1,5 +1,5 @@
-# gamemaster-client
-For managing a game of Imitato.
+# imitato-client
+Clients for the gamemaster and individual players for Imitato.
 
 A tomato and potato themed party game!
 
