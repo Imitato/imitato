@@ -46,7 +46,7 @@ Resources:
     Type: AWS::Serverless::Api
   AwsServerlessExpressFunction:
     Properties:
-      CodeUri: s3://imitato/422688e7ed35613ea97e943f78ab5c37
+      CodeUri: s3://imitato/d774dc544d2a3f344d2240c4aaf6b2ba
       Events:
         ProxyApiGreedy:
           Properties:
