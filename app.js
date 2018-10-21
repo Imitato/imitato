@@ -13,7 +13,7 @@ app.set('view engine', 'pug')
 if (process.env.NODE_ENV === 'test') {
   // NOTE: aws-serverless-express uses this app for its integration tests
   // and only applies compression to the /sam endpoint during testing.
-  router.use('/sam', compression())
+  router.use('/imitato', compression())
 } else {
   router.use(compression())
 }
@@ -32,8 +32,8 @@ router.get('/', (req, res) => {
   })
 })
 
-router.get('/sam', (req, res) => {
-  res.sendFile(`${__dirname}/sam-logo.png`)
+router.get('/imitato`', (req, res) => {
+  res.sendFile(`${__dirname}/imitato-square.png`)
 })
 
 router.get('/users', (req, res) => {
