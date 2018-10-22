@@ -15,15 +15,60 @@ client.connect(err => {
   app.get('/game/create', (req, res) => {
     const game = {
       _id: generateGameID(6),
+      rounds: [],
     }
-    gameCollection.insertOne(game)
+    gameCollection.insertOne(game, (err, obj) => {
+      const { ok, n } = obj.result
+      if (ok == 1) {
+        if (n == 1) res.status(200).send(game)
+        else res.status(400).send('Could not create game.')
+      } else {
+        res.status(400).send('Update not OK.')
+      }
+    })
+  })
 
-    res.send(game)
+  app.get('/game/round/create', (req, res) => {
+    const { gameId } = req.query
+    gameCollection.updateOne(
+      { _id: gameId },
+      { $push: { rounds: [] } },
+      (err, obj) => {
+        const { ok, n } = obj.result
+        if (ok == 1) {
+          if (n == 1) res.status(200).send('New round created.')
+          else res.status(400).send(`Game ${gameId} not found.`)
+        } else {
+          res.status(400).send('Update not OK.')
+        }
+      }
+    )
   })
 
   // upload images
-  app.post('/game/round', upload.single('image'), (req, res) => {
-    res.send(req.file)
+  app.post('/game/round/submit', upload.single('image'), (req, res) => {
+    const imageFile = req.file
+    const { userId, gameId, round } = req.body
+    gameCollection.updateOne(
+      { _id: gameId },
+      {
+        $push: {
+          [`rounds.${round}`]: {
+            userId,
+            image: imageFile.path,
+          },
+        },
+      },
+      (err, obj) => {
+        const { ok, n } = obj.result
+        if (ok == 1) {
+          if (n == 1) res.status(200).send(imageFile)
+          else res.status(400).send(`Game ${gameId} not found.`)
+        } else {
+          res.status(400).send('Update not OK.')
+        }
+      }
+    )
   })
 
   app.listen(port, () => {
