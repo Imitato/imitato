@@ -23,6 +23,8 @@ router.use(bodyParser.json())
 router.use(bodyParser.urlencoded({ extended: true }))
 router.use(awsServerlessExpressMiddleware.eventContext())
 
+// TODO: CREATE MIDDLEWARE TO DELETE OLD GAMES
+
 // NOTE: tests can't find the views directory without this
 app.set('views', path.join(__dirname, 'views'))
 
@@ -30,6 +32,36 @@ router.get('/', (req, res) => {
   res.render('index', {
     apiUrl: req.apiGateway ? `https://${req.apiGateway.event.headers.Host}/${req.apiGateway.event.requestContext.stage}` : 'http://localhost:3000'
   })
+})
+
+// Creates a game with gamemaster being the client who makes the request
+router.post('/imitato/game_create', (req, res) => {
+  res.json({})
+})
+
+// Allows other clients to join game
+router.post('/imitato/game_join', (req, res) => {
+  res.json({})
+})
+
+// Allows gamemaster to begin game
+router.post('/imitato/game_begin', (req, res) => {
+  res.json({})
+})
+
+// For client to get details about the game round - will contain things like prompt and time
+router.get('/imitato/game_round', (req, res) => {
+  res.json({})
+})
+
+// For client to send pictures for round to be scored
+router.post('/imitato/game_round', (req, res) => {
+  res.json({})
+})
+
+// Get results for a game so far
+router.post('/imitato/game_results', (req, res) => {
+  res.json({})
 })
 
 router.get('/imitato`', (req, res) => {
