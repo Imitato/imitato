@@ -6,6 +6,6 @@ Install [MongoDB](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os
 
 # Run
 
-```
-mongod
-```
+1. Run MongoDB with `mongod`.
+
+2. Start server with `yarn start`.
