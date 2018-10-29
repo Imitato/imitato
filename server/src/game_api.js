@@ -7,6 +7,18 @@ module.exports = function(collection) {
   const router = express.Router()
   const upload = multer({ dest: 'uploads/', preservePath: true })
 
+  router.get('/game', (req, res) => {
+    const { id } = req.query
+    collection
+      .findOne({ _id: id })
+      .then(result => {
+        res.status(200).send(result)
+      })
+      .catch(error => {
+        res.status(400).send(error)
+      })
+  })
+
   router.get('/game/create', (req, res) => {
     createGame((err, game) => {
       if (err) {
