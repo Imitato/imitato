@@ -11,12 +11,8 @@ module.exports = function(collection) {
     const { id } = req.query
     collection
       .findOne({ _id: id })
-      .then(result => {
-        res.status(200).send(result)
-      })
-      .catch(error => {
-        res.status(400).send(error)
-      })
+      .then(result => res.status(200).send(result))
+      .catch(error => res.status(400).send(error))
   })
 
   router.get('/game/create', (req, res) => {
@@ -48,21 +44,55 @@ module.exports = function(collection) {
     })
   }
 
-  router.get('/game/round/create', (req, res) => {
+  router.get('/game/create_round', (req, res) => {
     const { gameId } = req.query
-    collection.updateOne(
-      { _id: gameId },
-      { $push: { rounds: [] } },
-      (err, obj) => {
-        const { ok, n } = obj.result
-        if (ok == 1) {
-          if (n == 1) res.status(200).send('New round created.')
-          else res.status(400).send(`Game ${gameId} not found.`)
-        } else {
-          res.status(400).send('Update not OK.')
-        }
-      }
-    )
+    collection
+      .findOneAndUpdate(
+        { _id: gameId },
+        {
+          $push: {
+            rounds: {
+              $each: [{ submissions: [] }],
+              $position: 0,
+            },
+          },
+        },
+        { returnOriginal: false }
+      )
+      .then(result => {
+        const {
+          lastErrorObject: { updatedExisting },
+          value,
+        } = result
+
+        if (updatedExisting) res.status(200).send(value)
+        else res.status(400).send(`Game ${gameId} not found.`)
+      })
+      .catch(error => res.status(400).send(error))
+  })
+
+  router.get('/game/start_round', (req, res) => {
+    const { gameId } = req.query
+    collection
+      .findOneAndUpdate(
+        { _id: gameId },
+        { $set: { roundInProgress: true } },
+        { returnOriginal: false }
+      )
+      .then(result => res.status(200).send(result))
+      .catch(error => res.status(400).send(error))
+  })
+
+  router.get('/game/end_round', (req, res) => {
+    const { gameId } = req.query
+    collection
+      .findOneAndUpdate(
+        { _id: gameId },
+        { $set: { roundInProgress: false } },
+        { returnOriginal: false }
+      )
+      .then(result => res.status(200).send(result))
+      .catch(error => res.status(400).send(error))
   })
 
   // upload images
