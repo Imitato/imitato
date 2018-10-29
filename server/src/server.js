@@ -1,17 +1,18 @@
 const express = require('express')
 const multer = require('multer')
 const { MongoClient } = require('mongodb')
-const client = new MongoClient('mongodb://localhost:27017')
 
-const upload = multer({ dest: 'uploads/', preservePath: true })
+const mongoClient = new MongoClient('mongodb://localhost:27017')
 
 const app = express()
 const port = 3000
+const router = express.Router()
+const upload = multer({ dest: 'uploads/', preservePath: true })
 
 const DUPLICATE_KEY_ERROR = 11000
 
-client.connect(err => {
-  const db = client.db('local')
+mongoClient.connect(err => {
+  const db = mongoClient.db('local')
   const gameCollection = db.collection('games')
 
   function createGame(callback) {
@@ -33,7 +34,7 @@ client.connect(err => {
     })
   }
 
-  app.get('/game/create', (req, res) => {
+  router.get('/game/create', (req, res) => {
     createGame((err, game) => {
       if (err) {
         res.status(400).send(err)
@@ -43,7 +44,7 @@ client.connect(err => {
     })
   })
 
-  app.get('/game/round/create', (req, res) => {
+  router.get('/game/round/create', (req, res) => {
     const { gameId } = req.query
     gameCollection.updateOne(
       { _id: gameId },
@@ -61,7 +62,7 @@ client.connect(err => {
   })
 
   // upload images
-  app.post('/game/round/submit', upload.single('image'), (req, res) => {
+  router.post('/game/round/submit', upload.single('image'), (req, res) => {
     const imageFile = req.file
     const { userId, gameId, round } = req.body
     gameCollection.updateOne(
@@ -85,6 +86,8 @@ client.connect(err => {
       }
     )
   })
+
+  app.use('/imitato', router)
 
   app.listen(port, () => {
     console.log(`Listening on port ${port}.`)
