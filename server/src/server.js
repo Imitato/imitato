@@ -10,28 +10,28 @@ const port = 3000
 
 const DUPLICATE_KEY_ERROR = 11000
 
+function createGame(callback) {
+  const game = {
+    _id: generateGameID(6),
+    rounds: [],
+  }
+  gameCollection.insertOne(game, (error, obj) => {
+    if (error) {
+      if (error.code == DUPLICATE_KEY_ERROR) {
+        // try again if duplicate key
+        createGame(callback)
+      } else {
+        callback(error)
+      }
+    } else {
+      callback(error, obj)
+    }
+  })
+}
+
 client.connect(err => {
   const db = client.db('local')
   const gameCollection = db.collection('games')
-
-  function createGame(callback) {
-    const game = {
-      _id: generateGameID(6),
-      rounds: [],
-    }
-    gameCollection.insertOne(game, (error, obj) => {
-      if (error) {
-        if (error.code == DUPLICATE_KEY_ERROR) {
-          // try again if duplicate key
-          createGame(callback)
-        } else {
-          callback(error)
-        }
-      } else {
-        callback(error, obj)
-      }
-    })
-  }
 
   app.get('/game/create', (req, res) => {
     createGame((err, obj) => {
