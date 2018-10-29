@@ -8,17 +8,33 @@ const upload = multer({ dest: 'uploads/', preservePath: true })
 const app = express()
 const port = 3000
 
+const DUPLICATE_KEY_ERROR = 11000
+
 client.connect(err => {
   const db = client.db('local')
   const gameCollection = db.collection('games')
 
-  app.get('/game/create', (req, res) => {
+  function createGame(callback) {
     const game = {
       _id: generateGameID(6),
       rounds: [],
     }
-    gameCollection.insertOne(game, (err, obj) => {
-      const { ok, n } = obj.result
+    gameCollection.insertOne(game, (error, obj) => {
+      if (error) {
+        if (error.code == DUPLICATE_KEY_ERROR) {
+          // try again if duplicate key
+          createGame(callback)
+        } else {
+          callback(error)
+        }
+      } else {
+        callback(error, obj)
+      }
+    })
+  }
+
+  app.get('/game/create', (req, res) => {
+    createGame((err, obj) => {
       if (ok == 1) {
         if (n == 1) res.status(200).send(game)
         else res.status(400).send('Could not create game.')
