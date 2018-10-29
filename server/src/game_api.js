@@ -46,13 +46,14 @@ module.exports = function(collection) {
 
   router.get('/game/create_round', (req, res) => {
     const { gameId } = req.query
+    const round = { submissions: [] }
     collection
       .findOneAndUpdate(
         { _id: gameId },
         {
           $push: {
             rounds: {
-              $each: [{ submissions: [] }],
+              $each: [round],
               $position: 0,
             },
           },
