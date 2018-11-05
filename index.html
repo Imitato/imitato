@@ -11,8 +11,8 @@
       <script type="text/javascript">
         function processImage() {
             // TODO: Replace <Subscription Key> with valid subscription key.
-            var subscriptionKey = "<Subscription Key>";
-    
+            var subscriptionKey = ''
+
             // NOTE: You must use the same region in your REST call as you used to
             // obtain your subscription keys. For example, if you obtained your
             // subscription keys from westus, replace "westcentralus" in the URL
@@ -28,9 +28,7 @@
             var params = {
                 "returnFaceId": "true",
                 "returnFaceLandmarks": "false",
-                "returnFaceAttributes":
-                    "age,gender,headPose,smile,facialHair,glasses,emotion," +
-                    "hair,makeup,occlusion,accessories,blur,exposure,noise"
+                "returnFaceAttributes": "emotion"
             };
     
             // Display the image.
