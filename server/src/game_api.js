@@ -120,6 +120,8 @@ module.exports = function(collection) {
         }
       }
     )
+    const emotionRes = processImage(imageFile);
+    console.log(emotionRes);
   })
 
   return router
@@ -137,3 +139,70 @@ function generateGameID(length) {
   }
   return String.fromCharCode(...id)
 }
+
+function processImage(imageFile) {
+  // Replace with valid subscription key.
+  const subscriptionKey = ""
+
+  // NOTE: You must use the same region in your REST call as you used to
+  // obtain your subscription keys. For example, if you obtained your
+  // subscription keys from westus, replace "westcentralus" in the URL
+  // below with "westus".
+  //
+  // Free trial subscription keys are generated in the westcentralus region.
+  // If you use a free trial subscription key, you shouldn't need to change 
+  // this region.
+  const hostName = 'https://westcentralus.api.cognitive.microsoft.com';
+  var path = "/face/v1.0/detect";
+
+  // Request parameters.
+  const params = {
+      "returnFaceId": "true",
+      "returnFaceLandmarks": "false",
+      "returnFaceAttributes": "emotion"
+  };
+  
+  // Converts params into Uri string
+  path += 
+    Object
+    .entries(params)
+    .map(([k, v]) => 
+      `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+    .join('&');
+
+  // Perform the REST API call.
+  const postData = imageFile;
+  
+  const options = {
+    hostname: hostName, 
+    path: path,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/octet-stream',
+      'Content-Length': Buffer.byteLength(postData)
+    }
+  };
+  
+  var outString = '';
+  const req = http.request(options, (res) => {
+    console.log(`STATUS: ${res.statusCode}`);
+    console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
+    res.setEncoding('utf8');
+    res.on('data', (chunk) => {
+      outString += chunk;
+      console.log(`BODY: ${chunk}`);
+    });
+    res.on('end', () => {
+      console.log('No more data in response.');
+    });
+  });
+  
+  req.on('error', (e) => {
+    console.error(`problem with request: ${e.message}`);
+  });
+  
+  // write data to request body
+  req.write(postData);
+  req.end();
+  return chunk;
+};
