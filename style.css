@@ -269,6 +269,12 @@ body {
   height: 200px
 }
 
+.wrapper2 {
+  display: flex;
+  justify-content: center;
+  margin-right: 36px
+}
+
 .fruitwrapper {
   position: relative;
 }
@@ -317,7 +323,7 @@ body {
   transform: rotate(-15deg);
   position: relative;
   
-  animation: 800ms bounce5 ease 8;
+  animation: 800ms bounce5 ease infinite;
 }
 
 .blue {
