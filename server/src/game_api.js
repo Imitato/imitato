@@ -1,5 +1,8 @@
 const express = require('express')
 const multer = require('multer')
+const https = require('https')
+const axios = require('axios')
+const fs = require('fs');
 
 const DUPLICATE_KEY_ERROR = 11000
 
@@ -120,8 +123,9 @@ module.exports = function(collection) {
         }
       }
     )
+    // console.log(typeof(imageFile))
     const emotionRes = processImage(imageFile);
-    console.log(emotionRes);
+    // console.log(emotionRes);
   })
 
   return router
@@ -152,8 +156,8 @@ function processImage(imageFile) {
   // Free trial subscription keys are generated in the westcentralus region.
   // If you use a free trial subscription key, you shouldn't need to change 
   // this region.
-  const hostName = 'https://westcentralus.api.cognitive.microsoft.com';
-  var path = "/face/v1.0/detect";
+  const hostName = 'https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect';
+  var path = "";
 
   // Request parameters.
   const params = {
@@ -171,38 +175,23 @@ function processImage(imageFile) {
     .join('&');
 
   // Perform the REST API call.
-  const postData = imageFile;
-  
+  const postData = imageFile.path;
   const options = {
     hostname: hostName, 
     path: path,
     method: 'POST',
     headers: {
       'Content-Type': 'application/octet-stream',
-      'Content-Length': Buffer.byteLength(postData)
+      'Ocp-Apim-Subscription-Key': subscriptionKey
     }
   };
-  
-  var outString = '';
-  const req = http.request(options, (res) => {
-    console.log(`STATUS: ${res.statusCode}`);
-    console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
-    res.setEncoding('utf8');
-    res.on('data', (chunk) => {
-      outString += chunk;
-      console.log(`BODY: ${chunk}`);
-    });
-    res.on('end', () => {
-      console.log('No more data in response.');
-    });
-  });
-  
-  req.on('error', (e) => {
-    console.error(`problem with request: ${e.message}`);
-  });
-  
-  // write data to request body
-  req.write(postData);
-  req.end();
-  return chunk;
+
+  var img = fs.readFileSync(postData);
+  axios({method: "POST", url: hostName, headers: options['headers'], params: params, data: img})
+  .then(function(response) {
+    console.log(response.data[0].faceAttributes)
+  })
+  .catch(function(error) {
+    console.log(error)
+  })
 };
