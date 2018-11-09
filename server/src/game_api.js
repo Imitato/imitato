@@ -107,7 +107,7 @@ module.exports = function(collection) {
       { _id: gameId },
       {
         $push: {
-          [`rounds.${round}`]: {
+          [`rounds.${round}.submissions`]: {
             userId,
             image: imageFile.path,
           },
