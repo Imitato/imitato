@@ -104,29 +104,30 @@ module.exports = function(collection) {
   router.post('/game/round/submit', upload.single('image'), (req, res) => {
     const imageFile = req.file
     const { userId, gameId, round } = req.body
-    collection.updateOne(
-      { _id: gameId },
-      {
-        $push: {
-          [`rounds.${round}.submissions`]: {
-            userId,
-            image: imageFile.path,
+
+    processImage(imageFile).then(results => {
+      collection.updateOne(
+        { _id: gameId },
+        {
+          $push: {
+            [`rounds.${round}.submissions`]: {
+              userId,
+              image: imageFile.path,
+              emotions: results
+            },
           },
         },
-      },
-      (err, obj) => {
-        const { ok, n } = obj.result
-        if (ok == 1) {
-          if (n == 1) res.status(200).send(imageFile)
-          else res.status(400).send(`Game ${gameId} not found.`)
-        } else {
-          res.status(400).send('Update not OK.')
+        (err, obj) => {
+          const { ok, n } = obj.result
+          if (ok == 1) {
+            if (n == 1) res.status(200).send(imageFile)
+            else res.status(400).send(`Game ${gameId} not found.`)
+          } else {
+            res.status(400).send('Update not OK.')
+          }
         }
-      }
-    )
-    // console.log(typeof(imageFile))
-    const emotionRes = processImage(imageFile);
-    // console.log(emotionRes);
+      )
+    });
   })
 
   return router
@@ -188,10 +189,10 @@ function processImage(imageFile) {
     }
   };
 
-  var img = fs.readFileSync(postData);
-  axios({method: "POST", url: hostName, headers: options['headers'], params: params, data: img})
+  let img = fs.readFileSync(postData);
+  return axios({method: "POST", url: hostName, headers: options['headers'], params: params, data: img})
   .then(function(response) {
-    console.log(response.data[0].faceAttributes)
+    return response.data[0].faceAttributes
   })
   .catch(function(error) {
     console.log(error)
