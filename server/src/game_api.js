@@ -2,7 +2,8 @@ const express = require('express')
 const multer = require('multer')
 const https = require('https')
 const axios = require('axios')
-const fs = require('fs');
+const fs = require('fs')
+const keys = require('./creds.json')
 
 const DUPLICATE_KEY_ERROR = 11000
 
@@ -146,7 +147,8 @@ function generateGameID(length) {
 
 function processImage(imageFile) {
   // Replace with valid subscription key.
-  const subscriptionKey = ""
+
+  const subscriptionKey = keys['api_key'] 
 
   // NOTE: You must use the same region in your REST call as you used to
   // obtain your subscription keys. For example, if you obtained your
