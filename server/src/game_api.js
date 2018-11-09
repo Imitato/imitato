@@ -1,6 +1,5 @@
 const express = require('express')
 const multer = require('multer')
-const https = require('https')
 const axios = require('axios')
 const fs = require('fs')
 const keys = require('./creds.json')
