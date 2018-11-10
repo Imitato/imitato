@@ -6,6 +6,8 @@ const keys = require('./creds.json')
 
 const DUPLICATE_KEY_ERROR = 11000
 
+const EMOTIONS = ['anger', 'contempt', 'disgust', 'fear', 'happiness', 'neutral', 'sadness', 'surprise']
+
 module.exports = function(collection) {
   const router = express.Router()
   const upload = multer({ dest: 'uploads/', preservePath: true })
@@ -49,7 +51,17 @@ module.exports = function(collection) {
 
   router.get('/game/create_round', (req, res) => {
     const { gameId } = req.query
-    const round = { submissions: [] }
+    let rand_emotions = generateEmotions().split('').map(item => parseInt(item,10))
+    let total = rand_emotions.reduce((acc, num) => acc + num)
+    rand_emotions = rand_emotions.map(item => item / total)
+
+    emotions_map = {}
+
+    for (let i = 0; i < EMOTIONS.length; i++) {
+      emotions_map[EMOTIONS[i]] = rand_emotions[i]
+    }
+    
+    const round = { submissions: [], emotions_map }
     collection
       .findOneAndUpdate(
         { _id: gameId },
@@ -57,7 +69,6 @@ module.exports = function(collection) {
           $push: {
             rounds: {
               $each: [round],
-              $position: 0,
             },
           },
         },
@@ -105,27 +116,38 @@ module.exports = function(collection) {
     const { userId, gameId, round } = req.body
 
     processImage(imageFile).then(results => {
-      collection.updateOne(
+      collection.findOne(
         { _id: gameId },
-        {
-          $push: {
-            [`rounds.${round}.submissions`]: {
-              userId,
-              image: imageFile.path,
-              emotions: results
+      ).then(game => {
+        let emotions_map = game.rounds[parseInt(round)].emotions_map
+        let score = 0
+        for (let key in emotions_map) {
+          score += emotions_map[key] * results.emotion[key]
+        }
+
+        collection.updateOne(
+          { _id: gameId },
+          {
+            $push: {
+              [`rounds.${round}.submissions`]: {
+                userId,
+                image: imageFile.path,
+                emotions: results.emotion,
+                score
+              },
             },
           },
-        },
-        (err, obj) => {
-          const { ok, n } = obj.result
-          if (ok == 1) {
-            if (n == 1) res.status(200).send(imageFile)
-            else res.status(400).send(`Game ${gameId} not found.`)
-          } else {
-            res.status(400).send('Update not OK.')
+          (err, obj) => {
+            const { ok, n } = obj.result
+            if (ok == 1) {
+              if (n == 1) res.status(200).send(imageFile)
+              else res.status(400).send(`Game ${gameId} not found.`)
+            } else {
+              res.status(400).send('Update not OK.')
+            }
           }
-        }
-      )
+        )
+      })
     });
   })
 
@@ -143,6 +165,15 @@ function generateGameID(length) {
     id.push('A'.charCodeAt() + randomIndex)
   }
   return String.fromCharCode(...id)
+}
+
+/**
+ * @returns A random bitstring of length 8, where each digit corresponds
+ * to the emotions that the players need to show.
+ */
+function generateEmotions() {
+  let number = Math.floor(Math.random() * 256).toString(2)
+  return "00000000".substr(number.length) + number
 }
 
 function processImage(imageFile) {
