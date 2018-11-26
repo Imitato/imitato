@@ -2,7 +2,9 @@ const express = require('express')
 const multer = require('multer')
 const axios = require('axios')
 const fs = require('fs')
-const keys = require('./creds.json')
+var ENV = {
+  apiKey: process.env.AZURE_FACE_API_KEY
+};
 
 const DUPLICATE_KEY_ERROR = 11000
 
@@ -179,7 +181,7 @@ function generateEmotions() {
 function processImage(imageFile) {
   // Replace with valid subscription key.
 
-  const subscriptionKey = keys['api_key'] 
+  const subscriptionKey = ENV['apiKey'] 
 
   // NOTE: You must use the same region in your REST call as you used to
   // obtain your subscription keys. For example, if you obtained your

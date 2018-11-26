@@ -1,11 +1,11 @@
 {
-  "name": "test-server",
+  "name": "imitato-server",
   "version": "1.0.0",
-  "repository": "git@github.com:Imitato/test-server.git",
+  "repository": "git@github.com:Imitato/imitato-serverless.git",
   "author": "Steve Zhu <st.zhu1@gmail.com>",
   "private": true,
   "scripts": {
-    "start": "nodemon src/server.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "axios": "^0.18.0",
