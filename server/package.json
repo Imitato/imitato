@@ -1,0 +1,17 @@
+{
+  "name": "imitato-server",
+  "version": "1.0.0",
+  "repository": "git@github.com:Imitato/imitato-serverless.git",
+  "author": "Steve Zhu <st.zhu1@gmail.com>",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "express": "^4.16.4",
+    "mongodb": "^3.1.8",
+    "multer": "^1.4.1",
+    "nodemon": "^1.18.6"
+  }
+}
