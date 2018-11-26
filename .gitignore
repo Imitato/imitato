@@ -1,3 +1,5 @@
 node_modules/
 .vscode/
-creds.json
+node_modules/
+uploads/
+*.DS_Store
