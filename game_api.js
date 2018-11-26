@@ -2,15 +2,12 @@ const express = require('express')
 const multer = require('multer')
 const axios = require('axios')
 const fs = require('fs')
-var ENV = {
-  apiKey: process.env.AZURE_FACE_API_KEY
-};
 
 const DUPLICATE_KEY_ERROR = 11000
 
 const EMOTIONS = ['anger', 'contempt', 'disgust', 'fear', 'happiness', 'neutral', 'sadness', 'surprise']
 
-module.exports = function(collection) {
+module.exports = function(collection, ENV) {
   const router = express.Router()
   const upload = multer({ dest: 'uploads/', preservePath: true })
 
