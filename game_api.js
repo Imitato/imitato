@@ -28,7 +28,6 @@ module.exports = function(collection, ENV) {
   const upload = multer({ dest: 'uploads/', preservePath: true })
 
   router.get('/test', (req, res) => {
-    console.log(ENV.dbUser)
     collection
       .find()
       .toArray()
@@ -58,6 +57,7 @@ module.exports = function(collection, ENV) {
     const game = {
       _id: generateGameID(6),
       rounds: [],
+      roundInProgress: false
     }
     collection.insertOne(game, (error, obj) => {
       if (!error) {
@@ -75,6 +75,14 @@ module.exports = function(collection, ENV) {
 
   router.get('/game/create_round', (req, res) => {
     const { gameId } = req.query
+
+    collection.findOne({ _id: gameId }).then(game => {
+        if (game.roundInProgress) {
+            res.status(400).send(`Game ${gameId} already a has a round running.`)
+            return
+        }
+    })
+
     let rand_emotions = generateEmotions()
       .split('')
       .map(item => parseInt(item, 10))
