@@ -2,10 +2,13 @@ import React from 'react'
 import styled from 'styled-components'
 
 const REDIRECT_TARGET = 'game.html'
+const REDIRECT_DELAY = 6400
 
 export default class LoadingPage extends React.Component {
   componentDidMount() {
-    // window.setTimeout(this._redirect, 6400)
+    window.setTimeout(() => {
+      location.href = REDIRECT_TARGET
+    }, REDIRECT_DELAY)
   }
 
   render() {
@@ -14,8 +17,8 @@ export default class LoadingPage extends React.Component {
         <div className="loading-image">
           <div className="potato potato-left bounce" />
           <div className="tomato bounce">
-            <div className="tomato-body" />
             <div className="tomato-stem" />
+            <div className="tomato-body" />
           </div>
           <div className="potato potato-right bounce" />
         </div>
@@ -23,17 +26,12 @@ export default class LoadingPage extends React.Component {
       </Styles>
     )
   }
-
-  _redirect = () => {
-    location.href = REDIRECT_TARGET
-  }
 }
 
 const Styles = styled.div`
   .loading-text {
     display: flex;
     justify-content: center;
-    margin-right: 39px;
   }
 
   .loading-image {
@@ -45,11 +43,12 @@ const Styles = styled.div`
 
   .tomato {
     position: relative;
+    top: 7px;
+    margin: 0 20px;
   }
 
   .tomato-body {
-    position: absolute;
-    margin: 0 10px;
+    position: relative;
     width: 24px;
     height: 20px;
     border-radius: 11px;
@@ -57,8 +56,10 @@ const Styles = styled.div`
   }
 
   .tomato-stem {
-    position: absolute;
-    margin: 0 18px;
+    position: relative;
+    z-index: 1;
+    top: 3px;
+    left: 8px;
     width: 8px;
     height: 4px;
     border-radius: 11px;
@@ -74,12 +75,10 @@ const Styles = styled.div`
   }
 
   .potato-left {
-    margin: 0 10px;
     transform: rotate(15deg);
   }
 
   .potato-right {
-    margin: 0 52px;
     transform: rotate(-15deg);
   }
 
