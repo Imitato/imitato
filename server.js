@@ -17,7 +17,7 @@ const app = express()
 const port = 3000
 
 mongoClient.connect(err => {
-  const db = mongoClient.db('local')
+  const db = mongoClient.db('imitato')
   const gameCollection = db.collection('games')
 
   // http://expressjs.com/en/starter/static-files.html
@@ -40,7 +40,7 @@ mongoClient.connect(err => {
     response.sendFile(__dirname + '/assets/imitato.png')
   })
   
-  const gameRouter = gameApi(gameCollection)
+  const gameRouter = gameApi(gameCollection, ENV)
   app.use('/imitato', gameRouter)
 
   app.listen(port, () => {

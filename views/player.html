@@ -35,6 +35,7 @@
       const canvas = document.getElementById('canvas')
       const photo = document.getElementById('photo')
       const button = document.getElementById('button')
+      const submit = document.getElementById('submit')
       const userIdBox = document.getElementById('userIdBox')
       function makeid() {
         var text = "";
@@ -66,6 +67,14 @@
         }
       }
 
+      function dataURItoBlob(dataURI) {
+        var byteString = atob(dataURI.split(',')[1]);
+        var ab = new ArrayBuffer(byteString.length);
+        var ia = new Uint8Array(ab);
+        for (var i = 0; i < byteString.length; i++) { ia[i] = byteString.charCodeAt(i); }
+        return new Blob([ab], { type: 'image/jpeg' });
+      }
+      
       function submitPicture() {
         const width = video.videoWidth
         const height = video.videoHeight
@@ -80,10 +89,10 @@
 
           var data = new FormData();
 
-          data.append("image", data);
-          data.append("userId", userIdBox.getAttribute());
-          data.append("gameId", "PEQMLT");
-          data.append("round", "1");
+          data.append("image", dataURItoBlob(imageData))
+          data.append("userId", userIdBox.value);
+          data.append("gameId", "PNMFLL");
+          data.append("round", "0");
 
           var xhr = new XMLHttpRequest();
           xhr.withCredentials = true;
@@ -94,10 +103,9 @@
             }
           });
 
-          xhr.open("POST", "http://localhost:3000/imitato/game/round/submit");
-          xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+          xhr.open("POST", "/imitato/game/round/submit");
+          // xhr.setRequestHeader("Content-Type", "multipart/form-data");
           xhr.setRequestHeader("cache-control", "no-cache");
-          xhr.setRequestHeader("Postman-Token", "ce85b588-ed0d-4e3d-9f23-92e4637f39af");
 
           xhr.send(data);
         }
@@ -123,6 +131,11 @@
 
       button.addEventListener('click', event => {
         takePicture()
+        event.preventDefault()
+      }, false)
+      
+      submit.addEventListener('click', event => {
+        submitPicture()
         event.preventDefault()
       }, false)
 

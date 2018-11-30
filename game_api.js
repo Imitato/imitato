@@ -11,6 +11,11 @@ module.exports = function(collection, ENV) {
   const router = express.Router()
   const upload = multer({ dest: 'uploads/', preservePath: true })
 
+  router.get('/test', (req, res) => {
+    collection.find().then(result => res.status(200).send(result))
+      .catch(error => res.status(400).send(error))
+  })
+
   router.get('/game', (req, res) => {
     const { id } = req.query
     collection
