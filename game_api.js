@@ -18,7 +18,8 @@ module.exports = function(collection, ENV) {
   const upload = multer({ dest: 'uploads/', preservePath: true })
   
   router.get('/test', (req, res) => {
-    collection.find().then(result => res.status(200).send(result))
+    console.log(ENV.dbUser)
+    collection.find().toArray().then(result => res.status(200).send(result))
       .catch(error => res.status(400).send(error.message))
   })
 

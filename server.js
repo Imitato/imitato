@@ -1,6 +1,8 @@
 const express = require('express')
 const { MongoClient } = require('mongodb')
 const gameApi = require('./game_api')
+require('dotenv').config()
+
 var ENV = {
   apiKey: process.env.AZURE_FACE_API_KEY,
   dbUser: process.env.DB_USERNAME,
@@ -19,7 +21,7 @@ const port = 3000
 mongoClient.connect(err => {
   const db = mongoClient.db('imitato')
   const gameCollection = db.collection('games')
-
+  console.log(dbUrl)
   // http://expressjs.com/en/starter/static-files.html
   app.use(express.static('dist'));
 
