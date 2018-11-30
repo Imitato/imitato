@@ -21,19 +21,19 @@ mongoClient.connect(err => {
   const gameCollection = db.collection('games')
 
   // http://expressjs.com/en/starter/static-files.html
-  app.use(express.static('public'));
+  app.use(express.static('dist'));
 
   // http://expressjs.com/en/starter/basic-routing.html
   app.get('/', function(request, response) {
-    response.sendFile(__dirname + '/views/index.html');
+    response.sendFile(__dirname + '/dist/html/index.html');
   });
 
   app.get('/game.html', function(request, response) {
-    response.sendFile(__dirname + '/views/game.html');
+    response.sendFile(__dirname + '/dist/html/game.html');
   });
 
   app.get('/player.html', function(request, response) {
-    response.sendFile(__dirname + '/views/player.html')
+    response.sendFile(__dirname + '/dist/html/player.html')
   });
 
   app.get('/imitato.png', function(request, response) {
