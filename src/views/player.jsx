@@ -86,7 +86,6 @@ class Player extends Component {
   }
 
   submitPhoto = () => {
-    // const imageData = canvas.toDataURL('image/png')
     canvas.toBlob(blob => {
       const data = new FormData()
       data.append('image', blob)

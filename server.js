@@ -25,6 +25,7 @@ mongoClient.connect(err => {
 
   // http://expressjs.com/en/starter/static-files.html
   app.use(express.static('dist'));
+  app.use(express.static('assets'))
 
   // http://expressjs.com/en/starter/basic-routing.html
   app.get('/', function(request, response) {
@@ -38,10 +39,6 @@ mongoClient.connect(err => {
   app.get('/player', function(request, response) {
     response.sendFile(__dirname + '/dist/html/player.html')
   });
-
-  app.get('/imitato.png', function(request, response) {
-    response.sendFile(__dirname + '/assets/imitato.png')
-  })
 
   const gameRouter = gameApi(gameCollection, ENV)
   app.use('/imitato', gameRouter)

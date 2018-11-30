@@ -59,7 +59,7 @@ class Game extends Component {
   render() {
     return (
       <>
-        <img src="../imitato.png"/>
+        <img src="images/imitato.png"/>
           <h2>Imitato Gamemaster</h2>
           <p>Set up a game of Imitato, a fun game where you imitate ideas with your friends and have the computer guess.</p>
 
