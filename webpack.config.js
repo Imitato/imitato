@@ -7,7 +7,9 @@ const OUTPUT_PATH = resolve('dist/')
 module.exports = {
   mode: 'development',
   entry: {
-    main: resolve('src/views/app.jsx'),
+    index: resolve('src/views/app.jsx'),
+    game: resolve('src/views/game.jsx'),
+    player: resolve('src/views/player.jsx'),
   },
   output: {
     path: OUTPUT_PATH,
