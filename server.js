@@ -28,7 +28,6 @@ mongoClient.connect(err => {
     response.sendFile(__dirname + '/views/index.html');
   });
 
-  
   app.get('/game.html', function(request, response) {
     response.sendFile(__dirname + '/views/game.html');
   });
@@ -36,6 +35,10 @@ mongoClient.connect(err => {
   app.get('/player.html', function(request, response) {
     response.sendFile(__dirname + '/views/player.html')
   });
+
+  app.get('/imitato.png', function(request, response) {
+    response.sendFile(__dirname + '/assets/imitato.png')
+  })
   
   const gameRouter = gameApi(gameCollection)
   app.use('/imitato', gameRouter)
