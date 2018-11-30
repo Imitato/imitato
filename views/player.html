@@ -20,7 +20,9 @@
   <div class="container">
     <div>
       <video id="video" autoplay playsinline>Video stream not available.</video>
+      <input id="userIdBox" value="mrs"/>
       <button id="button">Take photo</button>
+      <button id="submit">Submit photo</button>
     </div>
     <div>
       <img id="photo" alt="The screen capture will appear in this box.">
@@ -33,6 +35,17 @@
       const canvas = document.getElementById('canvas')
       const photo = document.getElementById('photo')
       const button = document.getElementById('button')
+      const userIdBox = document.getElementBy('userIdBox')
+      function makeid() {
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        for (var i = 0; i < 5; i++)
+          text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+        return text;
+      }
+      userIdBox.setAttribute('value', 'mrs' + makeid())
 
       let streaming = false
 
@@ -50,6 +63,43 @@
           photo.setAttribute('src', data)
         } else {
           clearPhoto()
+        }
+      }
+
+      function submitPicture() {
+        const width = video.videoWidth
+        const height = video.videoHeight
+
+        const context = canvas.getContext('2d')
+        if (width && height) {
+          canvas.width = width
+          canvas.height = height
+          context.drawImage(video, 0, 0, width, height)
+
+          const imageData = canvas.toDataURL('image/png')
+
+          var data = new FormData();
+
+          data.append("image", data);
+          data.append("userId", userIdBox.getAttribute());
+          data.append("gameId", "PEQMLT");
+          data.append("round", "1");
+
+          var xhr = new XMLHttpRequest();
+          xhr.withCredentials = true;
+
+          xhr.addEventListener("readystatechange", function () {
+            if (this.readyState === 4) {
+              console.log(this.responseText);
+            }
+          });
+
+          xhr.open("POST", "http://localhost:3000/imitato/game/round/submit");
+          xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+          xhr.setRequestHeader("cache-control", "no-cache");
+          xhr.setRequestHeader("Postman-Token", "ce85b588-ed0d-4e3d-9f23-92e4637f39af");
+
+          xhr.send(data);
         }
       }
 
