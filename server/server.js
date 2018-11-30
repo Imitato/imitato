@@ -12,7 +12,7 @@ var ENV = {
 // local
 // const dbUrl = 'mongodb://localhost:27017'
 // mLab
-const dbUrl = 'mongodb://'+ENV['dbUser']+':'+ENV['dbPass']+'@ds157740.mlab.com:57740/imitato'
+const dbUrl = `mongodb://${ENV['dbUser']}:${ENV['dbPass']}@ds157740.mlab.com:57740/imitato`
 const mongoClient = new MongoClient(dbUrl)
 
 const app = express()
@@ -22,6 +22,7 @@ mongoClient.connect(err => {
   const db = mongoClient.db('imitato')
   const gameCollection = db.collection('games')
   console.log(dbUrl)
+
   // http://expressjs.com/en/starter/static-files.html
   app.use(express.static('dist'));
 

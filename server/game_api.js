@@ -2,27 +2,39 @@ const express = require('express')
 const multer = require('multer')
 const axios = require('axios')
 const fs = require('fs')
+require('dotenv').config()
 
 var ENV = {
   apiKey: process.env.AZURE_FACE_API_KEY,
   dbUser: process.env.DB_USERNAME,
-  dbPass: process.env.DB_PASSWORD
-};
+  dbPass: process.env.DB_PASSWORD,
+}
 
 const DUPLICATE_KEY_ERROR = 11000
 
-const EMOTIONS = ['anger', 'contempt', 'disgust', 'fear', 'happiness', 'neutral', 'sadness', 'surprise']
+const EMOTIONS = [
+  'anger',
+  'contempt',
+  'disgust',
+  'fear',
+  'happiness',
+  'neutral',
+  'sadness',
+  'surprise',
+]
 
 module.exports = function(collection, ENV) {
   const router = express.Router()
   const upload = multer({ dest: 'uploads/', preservePath: true })
-  
+
   router.get('/test', (req, res) => {
     console.log(ENV.dbUser)
-    collection.find().toArray().then(result => res.status(200).send(result))
+    collection
+      .find()
+      .toArray()
+      .then(result => res.status(200).send(result))
       .catch(error => res.status(400).send(error.message))
   })
-
 
   router.get('/game', (req, res) => {
     const { id } = req.query
@@ -63,7 +75,9 @@ module.exports = function(collection, ENV) {
 
   router.get('/game/create_round', (req, res) => {
     const { gameId } = req.query
-    let rand_emotions = generateEmotions().split('').map(item => parseInt(item,10))
+    let rand_emotions = generateEmotions()
+      .split('')
+      .map(item => parseInt(item, 10))
     let total = rand_emotions.reduce((acc, num) => acc + num)
     rand_emotions = rand_emotions.map(item => item / total)
 
@@ -72,7 +86,7 @@ module.exports = function(collection, ENV) {
     for (let i = 0; i < EMOTIONS.length; i++) {
       emotions_map[EMOTIONS[i]] = rand_emotions[i]
     }
-    
+
     const round = { submissions: [], emotions_map }
     collection
       .findOneAndUpdate(
@@ -125,41 +139,37 @@ module.exports = function(collection, ENV) {
   // upload images
   router.post('/game/round/submit', upload.single('image'), (req, res) => {
     const imageFile = req.file
-    const { userId, gameId } = req.body
+    const { userId, gameId } = req.query
 
     processImage(imageFile).then(results => {
-      collection.findOne(
-        { _id: gameId },
-      ).then(game => {
+      collection.findOne({ _id: gameId }).then(game => {
         let lastRound = game.rounds.length - 1
         let emotions_map = game.rounds[lastRound].emotions_map
         let emotion_results = results ? results.emotion : {}
 
         // only let a user send 1 photo per round
         for (let submission in game.rounds[lastRound].submissions) {
-            if (submission["userId"] == userId) {
-              res.status(400).send('Photo already submitted!')
-              return
-            }
+          if (submission['userId'] == userId) {
+            res.status(400).send('Photo already submitted!')
+            return
           }
+        }
         // do not let users send photo after end of round
         if (!game.roundInProgress) {
-        res.status(400).send('The round has ended already.')
-        return
+          res.status(400).send('The round has ended already.')
+          return
         }
-        
+
         let score = 0
         if (!results) {
           for (let i = 0; i < EMOTIONS.length; i++) {
             emotion_results[EMOTIONS[i]] = 0
           }
-        }
-        else {
+        } else {
           for (let key in emotions_map) {
             score += emotions_map[key] * emotion_results[key]
           }
         }
-        
 
         collection.updateOne(
           { _id: gameId },
@@ -169,7 +179,7 @@ module.exports = function(collection, ENV) {
                 userId,
                 image: imageFile.path,
                 emotions: emotion_results,
-                score
+                score,
               },
             },
           },
@@ -184,7 +194,7 @@ module.exports = function(collection, ENV) {
           }
         )
       })
-    });
+    })
   })
 
   return router
@@ -209,13 +219,13 @@ function generateGameID(length) {
  */
 function generateEmotions() {
   let number = Math.floor(Math.random() * 256).toString(2)
-  return "00000000".substr(number.length) + number
+  return '00000000'.substr(number.length) + number
 }
 
 function processImage(imageFile) {
   // Replace with valid subscription key.
 
-  const subscriptionKey = ENV['apiKey'] 
+  const subscriptionKey = ENV['apiKey']
 
   // NOTE: You must use the same region in your REST call as you used to
   // obtain your subscription keys. For example, if you obtained your
@@ -223,44 +233,48 @@ function processImage(imageFile) {
   // below with "westus".
   //
   // Free trial subscription keys are generated in the westcentralus region.
-  // If you use a free trial subscription key, you shouldn't need to change 
+  // If you use a free trial subscription key, you shouldn't need to change
   // this region.
-  const hostName = 'https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect';
-  var path = "";
+  const hostName =
+    'https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect'
+  var path = ''
 
   // Request parameters.
   const params = {
-      "returnFaceId": "true",
-      "returnFaceLandmarks": "false",
-      "returnFaceAttributes": "emotion"
-  };
-  
+    returnFaceId: 'true',
+    returnFaceLandmarks: 'false',
+    returnFaceAttributes: 'emotion',
+  }
+
   // Converts params into Uri string
-  path += 
-    Object
-    .entries(params)
-    .map(([k, v]) => 
-      `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
-    .join('&');
+  path += Object.entries(params)
+    .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+    .join('&')
 
   // Perform the REST API call.
-  const postData = imageFile.path;
+  const postData = imageFile.path
   const options = {
-    hostname: hostName, 
+    hostname: hostName,
     path: path,
     method: 'POST',
     headers: {
       'Content-Type': 'application/octet-stream',
-      'Ocp-Apim-Subscription-Key': subscriptionKey
-    }
-  };
+      'Ocp-Apim-Subscription-Key': subscriptionKey,
+    },
+  }
 
-  let img = fs.readFileSync(postData);
-  return axios({method: "POST", url: hostName, headers: options['headers'], params: params, data: img})
-  .then(function(response) {
-    return response.data[0].faceAttributes
+  let img = fs.readFileSync(postData)
+  return axios({
+    method: 'POST',
+    url: hostName,
+    headers: options['headers'],
+    params: params,
+    data: img,
   })
-  .catch(function(error) {
-    console.log(error)
-  })
-};
+    .then(function(response) {
+      return response.data[0].faceAttributes
+    })
+    .catch(function(error) {
+      console.log(error)
+    })
+}
