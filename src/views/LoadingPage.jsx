@@ -40,6 +40,8 @@ const Styles = styled.div`
 
   .loading-text {
     color: white;
+    font-weight: 600;
+    font-size: 18px;
   }
 
   .loading-image {
