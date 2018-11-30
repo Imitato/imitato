@@ -28,7 +28,7 @@ class SubmitButton extends React.Component {
   }
 
   onClickHandler() {
-    request('https://postman-echo.com/get?foo1=bar1&foo2=bar2', 'GET', this)
+    request('/imitato/game/create', 'GET', this)
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {

@@ -3,6 +3,12 @@ const multer = require('multer')
 const axios = require('axios')
 const fs = require('fs')
 
+var ENV = {
+  apiKey: process.env.AZURE_FACE_API_KEY,
+  dbUser: process.env.DB_USERNAME,
+  dbPass: process.env.DB_PASSWORD
+};
+
 const DUPLICATE_KEY_ERROR = 11000
 
 const EMOTIONS = ['anger', 'contempt', 'disgust', 'fear', 'happiness', 'neutral', 'sadness', 'surprise']
@@ -10,11 +16,12 @@ const EMOTIONS = ['anger', 'contempt', 'disgust', 'fear', 'happiness', 'neutral'
 module.exports = function(collection, ENV) {
   const router = express.Router()
   const upload = multer({ dest: 'uploads/', preservePath: true })
-
+  
   router.get('/test', (req, res) => {
     collection.find().then(result => res.status(200).send(result))
-      .catch(error => res.status(400).send(error))
+      .catch(error => res.status(400).send(error.message))
   })
+
 
   router.get('/game', (req, res) => {
     const { id } = req.query
@@ -59,7 +66,7 @@ module.exports = function(collection, ENV) {
     let total = rand_emotions.reduce((acc, num) => acc + num)
     rand_emotions = rand_emotions.map(item => item / total)
 
-    emotions_map = {}
+    let emotions_map = {}
 
     for (let i = 0; i < EMOTIONS.length; i++) {
       emotions_map[EMOTIONS[i]] = rand_emotions[i]
@@ -117,26 +124,37 @@ module.exports = function(collection, ENV) {
   // upload images
   router.post('/game/round/submit', upload.single('image'), (req, res) => {
     const imageFile = req.file
-    const { userId, gameId, round } = req.body
+    const { userId, gameId } = req.body
 
     processImage(imageFile).then(results => {
       collection.findOne(
         { _id: gameId },
       ).then(game => {
-        let emotions_map = game.rounds[parseInt(round)].emotions_map
+        let lastRound = game.rounds.length - 1
+        let emotions_map = game.rounds[lastRound].emotions_map
+        let emotion_results = results ? results.emotion : {}
+        
         let score = 0
-        for (let key in emotions_map) {
-          score += emotions_map[key] * results.emotion[key]
+        if (!results) {
+          for (let i = 0; i < EMOTIONS.length; i++) {
+            emotion_results[EMOTIONS[i]] = 0
+          }
         }
+        else {
+          for (let key in emotions_map) {
+            score += emotions_map[key] * emotion_results[key]
+          }
+        }
+        
 
         collection.updateOne(
           { _id: gameId },
           {
             $push: {
-              [`rounds.${round}.submissions`]: {
+              [`rounds.${lastRound}.submissions`]: {
                 userId,
                 image: imageFile.path,
-                emotions: results.emotion,
+                emotions: emotion_results,
                 score
               },
             },
