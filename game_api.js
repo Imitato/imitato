@@ -148,7 +148,7 @@ module.exports = function(collection, ENV) {
         let emotion_results = results ? results.emotion : {}
 
         // only let a user send 1 photo per round
-        for (let submission in game.rounds[lastRound].submissions) {
+        for (let submission of game.rounds[lastRound].submissions) {
           if (submission['userId'] == userId) {
             res.status(400).send('Photo already submitted!')
             return
