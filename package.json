@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "build": "webpack --config webpack.config.js",
-    "start": "node server.js"
+    "start": "nodemon server.js"
   },
   "dependencies": {
     "axios": "^0.18.0",
