@@ -28,18 +28,18 @@ mongoClient.connect(err => {
     response.sendFile(__dirname + '/dist/html/index.html');
   });
 
-  app.get('/game.html', function(request, response) {
+  app.get('/game', function(request, response) {
     response.sendFile(__dirname + '/dist/html/game.html');
   });
 
-  app.get('/player.html', function(request, response) {
+  app.get('/player', function(request, response) {
     response.sendFile(__dirname + '/dist/html/player.html')
   });
 
   app.get('/imitato.png', function(request, response) {
     response.sendFile(__dirname + '/assets/imitato.png')
   })
-  
+
   const gameRouter = gameApi(gameCollection, ENV)
   app.use('/imitato', gameRouter)
 

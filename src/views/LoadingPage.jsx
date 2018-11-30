@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-const REDIRECT_TARGET = 'game.html'
+const REDIRECT_TARGET = '/player'
 const REDIRECT_DELAY = 6400
 
 export default class LoadingPage extends React.Component {
