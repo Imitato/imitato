@@ -29,16 +29,23 @@ export default class LoadingPage extends React.Component {
 }
 
 const Styles = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #3f51b5;
+
   .loading-text {
-    display: flex;
-    justify-content: center;
+    color: white;
   }
 
   .loading-image {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 200px;
+    flex-grow: 1;
+    max-height: 130px;
   }
 
   .tomato {
@@ -88,7 +95,7 @@ const Styles = styled.div`
 
   @keyframes bounce {
     50% {
-      transform: translateY(25px);
+      transform: translateY(24px);
     }
   }
 `
