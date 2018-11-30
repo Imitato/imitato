@@ -23,6 +23,8 @@
       <input id="userIdBox" value="mrs"/>
       <button id="button">Take photo</button>
       <button id="submit">Submit photo</button>
+      gameId:
+      <input id="gameIdBox" value="gameId"/>
     </div>
     <div>
       <img id="photo" alt="The screen capture will appear in this box.">
@@ -37,6 +39,7 @@
       const button = document.getElementById('button')
       const submit = document.getElementById('submit')
       const userIdBox = document.getElementById('userIdBox')
+      const gameIdBox = document.getElementById('gameIdBox')
       function makeid() {
         var text = "";
         var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

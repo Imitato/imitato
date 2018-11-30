@@ -8,105 +8,73 @@
   </head>
   <body>
 
-  <!--
-      <script type="text/javascript">
-        let subscriptionKey = '';
-
-        function processImage() {
-            // NOTE: You must use the same region in your REST call as you used to
-            // obtain your subscription keys. For example, if you obtained your
-            // subscription keys from westus, replace "westcentralus" in the URL
-            // below with "westus".
-            //
-            // Free trial subscription keys are generated in the westcentralus region.
-            // If you use a free trial subscription key, you shouldn't need to change 
-            // this region.
-            var uriBase =
-                "https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect";
-    
-            // Request parameters.
-            var params = {
-                "returnFaceId": "true",
-                "returnFaceLandmarks": "false",
-                "returnFaceAttributes": "emotion"
-            };
-    
-            // Display the image.
-            var sourceImageUrl = document.getElementById("inputImage").value;
-            document.querySelector("#sourceImage").src = sourceImageUrl;
-    
-            // Perform the REST API call.
-            $.ajax({
-                url: uriBase + "?" + $.param(params),
-    
-                // Request headers.
-                beforeSend: function(xhrObj){
-                    xhrObj.setRequestHeader("Content-Type","application/json");
-                    xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key", subscriptionKey);
-                },
-    
-                type: "POST",
-    
-                // Request body.
-                data: '{"url": ' + '"' + sourceImageUrl + '"}',
-            })
-    
-            .done(function(data) {
-                // Show formatted JSON on webpage.
-                $("#responseTextArea").val(JSON.stringify(data, null, 2));
-            })
-    
-            .fail(function(jqXHR, textStatus, errorThrown) {
-                // Display error message.
-                var errorString = (errorThrown === "") ?
-                    "Error. " : errorThrown + " (" + jqXHR.status + "): ";
-                errorString += (jqXHR.responseText === "") ?
-                    "" : (jQuery.parseJSON(jqXHR.responseText).message) ?
-                        jQuery.parseJSON(jqXHR.responseText).message :
-                            jQuery.parseJSON(jqXHR.responseText).error.message;
-                alert(errorString);
-            });
-        };
-    </script>
--->
-
     <img src="../imitato.png"/>
     <h2>Imitato Gamemaster</h2>
     <p>Set up a game of Imitato, a fun game where you imitate ideas with your friends and have the computer guess.</p>
 
-    <!-- We will put our React component inside this div. -->
-    <div id="submit_button_container"></div>
-
-    <!-- Load React. -->
-    <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
-    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
-    
-    <!-- Load our React components. -->
-    <script src="submit_button.js"></script>
-
-    <h1>Detect Faces:</h1>
-    Enter the URL to an image that includes a face or faces, then click
-    the <strong>Analyze face</strong> button.<br><br>
-    
-    Image to analyze: <input type="text" name="inputImage" id="inputImage"
-    value="https://upload.wikimedia.org/wikipedia/commons/c/c3/RH_Louise_Lillian_Gish.jpg" />
-    
-    <button onclick="processImage()">Analyze face</button><br><br>
-    
-    <div id="wrapper" style="width:1020px; display:table;">
-        <div id="jsonOutput" style="width:600px; display:table-cell;">
-            Response:<br><br>
-    
-            <textarea id="responseTextArea" class="UIInput"
-                      style="width:580px; height:400px;"></textarea>
-        </div>
-        <div id="imageDiv" style="width:420px; display:table-cell;">
-            Source image:<br><br>
-    
-            <img id="sourceImage" width="400" />
-        </div>
+    <div>
+        <button id="button">Create game</button>
+        gameId:
+        <input id="gameIdBox" value="gameId"/>
+        <button id="submit">Get game</button>
     </div>
+    <script>
+        (() => {
+            const createGameButton = document.getElementById('video')
+            const getGameButton = document.getElementById('video')
+            const gameIdBox = document.getElementById('gameIdBox')
+
+            function getGame() {
+                var gameId = gameIdBox.value
+
+                var data = new FormData();
+
+                var xhr = new XMLHttpRequest();
+                xhr.withCredentials = true;
+
+                xhr.addEventListener("readystatechange", function () {
+                    if (this.readyState === 4) {
+                    console.log(this.responseText);
+                    }
+                });
+
+                xhr.open("GET", "/imitato/game?=" + gameID);
+                xhr.setRequestHeader("cache-control", "no-cache");
+
+                xhr.send(data);
+            }
+
+            function createGame() {
+                var data = new FormData();
+
+                var xhr = new XMLHttpRequest();
+                xhr.withCredentials = true;
+
+                xhr.addEventListener("readystatechange", function () {
+                    if (this.readyState === 4) {
+                        console.log(xhr.response);
+                        console.log(this.responseText);
+                    }
+                });
+
+                xhr.open("GET", "/imitato/game?=" + gameID);
+                xhr.setRequestHeader("cache-control", "no-cache");
+
+                xhr.send(data);
+            }
+
+            createGameButton.addEventListener('click', event => {
+                createGame();
+                getGame();
+                event.preventDefault()
+            }, false)
+            
+            getGameButton.addEventListener('click', event => {
+                getGame()
+                event.preventDefault()
+            }, false)
+        })()
+      </script>
 
   </body>
 </html>
