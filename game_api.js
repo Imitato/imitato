@@ -134,6 +134,19 @@ module.exports = function(collection, ENV) {
         let lastRound = game.rounds.length - 1
         let emotions_map = game.rounds[lastRound].emotions_map
         let emotion_results = results ? results.emotion : {}
+
+        // only let a user send 1 photo per round
+        for (let submission in game.rounds[lastRound].submissions) {
+            if (submission["userId"] == userId) {
+              res.status(400).send('Photo already submitted!')
+              return
+            }
+          }
+        // do not let users send photo after end of round
+        if (!game.roundInProgress) {
+        res.status(400).send('The round has ended already.')
+        return
+        }
         
         let score = 0
         if (!results) {
