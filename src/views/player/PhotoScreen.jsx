@@ -28,6 +28,7 @@ export default class PhotoScreen extends React.Component {
         <video ref={this.video} id="video" autoPlay playsInline>
           Video stream not available.
         </video>
+        <button className="photo-button" />
       </Styles>
     )
   }
@@ -46,5 +47,22 @@ const Styles = styled.div`
     height: 100%;
     border: none;
     transform: scale(-1, 1);
+  }
+
+  .photo-button {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 40px;
+    margin: 0 auto;
+    width: 60px;
+    height: 60px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: url('https://upload.wikimedia.org/wikipedia/commons/5/5b/Rotten_Tomatoes.svg')
+      no-repeat center;
+    background-size: contain;
   }
 `
