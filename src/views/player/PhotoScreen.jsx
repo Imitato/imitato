@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import axios from 'axios'
 import LoadingView from './LoadingView'
 
 const USER_MEDIA_CONSTRAINTS = {
@@ -63,6 +64,23 @@ export default class PhotoScreen extends React.Component {
     context.drawImage(video, 0, 0, width, height)
 
     this.setState({ photoTaken: true })
+  }
+
+  submitPhoto = () => {
+    const canvas = this.canvas.current
+    canvas.toBlob(blob => {
+      const data = new FormData()
+      data.append('image', blob)
+      axios.post('/imitato/game/round/submit', data, {
+        headers: {
+          'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
+        },
+        params: {
+          gameId: this.state.gameId,
+          userId: this.state.userId,
+        },
+      })
+    }, 'image/jpeg')
   }
 }
 
