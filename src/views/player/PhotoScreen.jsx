@@ -25,11 +25,9 @@ export default class PhotoScreen extends React.Component {
     return (
       <Styles>
         {!this.state.streaming && <LoadingView />}
-        <Styles>
-          <video ref={this.video} id="video" autoPlay playsInline>
-            Video stream not available.
-          </video>
-        </Styles>
+        <video ref={this.video} id="video" autoPlay playsInline>
+          Video stream not available.
+        </video>
       </Styles>
     )
   }
