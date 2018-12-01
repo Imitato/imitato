@@ -43,7 +43,9 @@ export default class SetupScreen extends React.Component {
 }
 
 const Styles = styled.div`
+  margin: 0 auto;
   padding: 2em;
+  max-width: 500px;
 
   img {
     width: 100%;
