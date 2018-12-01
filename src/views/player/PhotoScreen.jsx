@@ -34,18 +34,16 @@ export default class PhotoScreen extends React.Component {
     return (
       <Styles>
         {!this.state.streaming && <LoadingView />}
-        <div style={{ display: this.state.photoTaken ? 'none' : 'block' }}>
+        <div className={this.state.photoTaken ? 'hidden' : undefined}>
           <video ref={this.video} className="photo" autoPlay playsInline>
             Video stream not available.
           </video>
           <button id="photo-button" onClick={this.takePhoto} />
         </div>
-        <div style={{ display: this.state.photoTaken ? 'block' : 'none' }}>
+        <div className={this.state.photoTaken ? undefined : 'hidden'}>
           <canvas ref={this.canvas} className="photo" />
-          <button
-            id="retake-button"
-            onClick={() => this.setState({ photoTaken: false })}
-          />
+          <button id="retake-button" onClick={this.retakePhoto} />
+          <button id="submit-button" onClick={this.submitPhoto} />
         </div>
       </Styles>
     )
@@ -64,6 +62,10 @@ export default class PhotoScreen extends React.Component {
     context.drawImage(video, 0, 0, width, height)
 
     this.setState({ photoTaken: true })
+  }
+
+  retakePhoto = () => {
+    this.setState({ photoTaken: false })
   }
 
   submitPhoto = () => {
@@ -97,6 +99,10 @@ const Styles = styled.div`
     height: 100vh;
     border: none;
     transform: scale(-1, 1);
+  }
+
+  .hidden {
+    display: none;
   }
 
   #photo-button {
