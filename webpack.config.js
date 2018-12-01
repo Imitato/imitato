@@ -2,12 +2,11 @@ const path = require('path')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
-const OUTPUT_PATH = resolve('dist/')
+const OUTPUT_PATH = resolve('server/dist/')
 
 module.exports = {
   mode: 'development',
   entry: {
-    index: resolve('src/views/index.jsx'),
     game: resolve('src/views/game.jsx'),
     player: resolve('src/views/player/index.jsx'),
   },
