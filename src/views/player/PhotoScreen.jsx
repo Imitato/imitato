@@ -137,4 +137,19 @@ const Styles = styled.div`
     filter: drop-shadow(0 0 0.8px black);
     cursor: pointer;
   }
+
+  #submit-button {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    padding: 0;
+    width: 48px;
+    height: 48px;
+    border: none;
+
+    background: url(images/play-button.svg) no-repeat center;
+    background-size: contain;
+    filter: drop-shadow(0 0 1px black);
+    cursor: pointer;
+  }
 `
