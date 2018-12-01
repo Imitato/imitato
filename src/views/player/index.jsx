@@ -9,12 +9,14 @@ class Player extends Component {
   render() {
     return (
       <>
-        {this.state.state == 'setup' && (
-          <SetupScreen onJoin={() => this.setState({ state: 'photo' })} />
-        )}
+        {this.state.state == 'setup' && <SetupScreen onJoin={this._onJoin} />}
         {this.state.state == 'photo' && <PhotoScreen />}
       </>
     )
+  }
+
+  _onJoin = options => {
+    this.setState({ state: 'photo' })
   }
 }
 

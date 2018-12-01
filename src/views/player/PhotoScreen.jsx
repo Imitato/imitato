@@ -45,9 +45,7 @@ export default class PhotoScreen extends React.Component {
           <button
             id="retake-button"
             onClick={() => this.setState({ photoTaken: false })}
-          >
-            ×
-          </button>
+          />
         </div>
       </Styles>
     )
@@ -107,11 +105,10 @@ const Styles = styled.div`
     right: 0;
     bottom: 40px;
     margin: 0 auto;
+    padding: 0;
     width: 60px;
     height: 60px;
-
     border: none;
-    border-radius: 50%;
 
     background: url('https://upload.wikimedia.org/wikipedia/commons/5/5b/Rotten_Tomatoes.svg')
       no-repeat center;
@@ -122,17 +119,16 @@ const Styles = styled.div`
 
   #retake-button {
     position: absolute;
-    left: 0.2em;
-    top: 0.2em;
-    margin: 0;
+    top: 20px;
+    left: 20px;
     padding: 0;
+    width: 24px;
+    height: 24px;
     border: none;
-    background: none;
 
-    color: white;
-    font-size: 50px;
-    text-shadow: 0px 0px 1px black;
-    line-height: 0.6;
+    background: url(images/close-button.svg) no-repeat center;
+    background-size: contain;
+    filter: drop-shadow(0 0 0.8px black);
     cursor: pointer;
   }
 `
