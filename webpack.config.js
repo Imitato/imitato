@@ -9,7 +9,7 @@ module.exports = {
   entry: {
     index: resolve('src/views/index.jsx'),
     game: resolve('src/views/game.jsx'),
-    player: resolve('src/views/player.jsx'),
+    player: resolve('src/views/player/index.jsx'),
   },
   output: {
     path: OUTPUT_PATH,
