@@ -11,9 +11,9 @@ var ENV = {
 }
 
 // local
-const dbUrl = 'mongodb://localhost:27017'
+// const dbUrl = 'mongodb://localhost:27017'
 // mLab
-// const dbUrl = `mongodb://${ENV['dbUser']}:${ENV['dbPass']}@ds157740.mlab.com:57740/imitato`
+const dbUrl = `mongodb://${ENV['dbUser']}:${ENV['dbPass']}@ds157740.mlab.com:57740/imitato`
 const mongoClient = new MongoClient(dbUrl)
 
 const app = express()
