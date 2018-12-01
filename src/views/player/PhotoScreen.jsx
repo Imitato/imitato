@@ -23,7 +23,9 @@ export default class PhotoScreen extends React.Component {
       .getUserMedia(USER_MEDIA_CONSTRAINTS)
       .then(stream => {
         this.video.current.srcObject = stream
-        this.setState({ streaming: true })
+
+        // wait a bit for video to load
+        setTimeout(() => this.setState({ streaming: true }), 100)
       })
       .catch(console.error)
   }
@@ -114,6 +116,7 @@ const Styles = styled.div`
     background: url('https://upload.wikimedia.org/wikipedia/commons/5/5b/Rotten_Tomatoes.svg')
       no-repeat center;
     background-size: contain;
+    filter: drop-shadow(0 0 1px black);
     cursor: pointer;
   }
 
