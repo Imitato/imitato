@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 export default class SetupScreen extends React.Component {
-  state = { gameId: '', userId: '' }
+  state = { gameId: '', playerId: '' }
 
   render() {
     return (
@@ -18,13 +18,13 @@ export default class SetupScreen extends React.Component {
             value={this.state.gameId}
             onChange={this._onChange}
           />
-          <label htmlFor="user-id">Name</label>
+          <label htmlFor="player-id">Name</label>
           <input
-            name="userId"
-            id="user-id"
+            name="playerId"
+            id="player-id"
             type="text"
             placeholder="Enter your name"
-            value={this.state.userId}
+            value={this.state.playerId}
             onChange={this._onChange}
           />
           <button onClick={this._onSubmit}>Join</button>

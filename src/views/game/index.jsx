@@ -22,10 +22,10 @@ class Game extends Component {
         const submissions = rounds[rounds.length - 1].submissions
         let curr = Object.assign({}, this.state.playerScores)
         submissions.forEach(sub => {
-          if (sub.userId in curr) {
-            curr[sub.userId] += sub.score
+          if (sub.playerId in curr) {
+            curr[sub.playerId] += sub.score
           } else {
-            curr[sub.userId] = sub.score
+            curr[sub.playerId] = sub.score
           }
         })
         this.setState({ roundState: 0, playerScores: curr })

@@ -57,7 +57,7 @@ module.exports = function(collection, ENV) {
     const game = {
       _id: generateGameID(6),
       rounds: [],
-      roundInProgress: false
+      roundInProgress: false,
     }
     collection.insertOne(game, (error, obj) => {
       if (!error) {
@@ -77,10 +77,10 @@ module.exports = function(collection, ENV) {
     const { gameId } = req.query
 
     collection.findOne({ _id: gameId }).then(game => {
-        if (game.roundInProgress) {
-            res.status(400).send(`Game ${gameId} already a has a round running.`)
-            return
-        }
+      if (game.roundInProgress) {
+        res.status(400).send(`Game ${gameId} already a has a round running.`)
+        return
+      }
     })
 
     let rand_emotions = generateEmotions()
@@ -147,7 +147,7 @@ module.exports = function(collection, ENV) {
   // upload images
   router.post('/game/round/submit', upload.single('image'), (req, res) => {
     const imageFile = req.file
-    const { userId, gameId } = req.query
+    const { playerId, gameId } = req.query
 
     processImage(imageFile).then(results => {
       collection.findOne({ _id: gameId }).then(game => {
@@ -157,7 +157,7 @@ module.exports = function(collection, ENV) {
 
         // only let a user send 1 photo per round
         for (let submission of game.rounds[lastRound].submissions) {
-          if (submission['userId'] == userId) {
+          if (submission['playerId'] == playerId) {
             res.status(400).send('Photo already submitted!')
             return
           }
@@ -184,7 +184,7 @@ module.exports = function(collection, ENV) {
           {
             $push: {
               [`rounds.${lastRound}.submissions`]: {
-                userId,
+                playerId,
                 image: imageFile.path,
                 emotions: emotion_results,
                 score,

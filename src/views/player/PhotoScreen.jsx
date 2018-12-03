@@ -79,7 +79,7 @@ export default class PhotoScreen extends React.Component {
         },
         params: {
           gameId: this.state.gameId,
-          userId: this.state.userId,
+          playerId: this.state.playerId,
         },
       })
     }, 'image/jpeg')
