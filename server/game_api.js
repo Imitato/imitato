@@ -190,14 +190,8 @@ module.exports = function(collection, ENV) {
         }
 
         let score = 0
-        if (emotion_results == null) {
-          for (let i = 0; i < EMOTIONS.length; i++) {
-            emotion_results[EMOTIONS[i]] = 0
-          }
-        } else {
-          for (let key in emotions_map) {
-            score += emotions_map[key] * emotion_results[key]
-          }
+        for (let key in emotions_map) {
+          score += emotions_map[key] * emotion_results[key]
         }
 
         collection.updateOne(
@@ -206,7 +200,7 @@ module.exports = function(collection, ENV) {
             $push: {
               [`rounds.${lastRound}.submissions`]: {
                 playerId,
-                image: imageFile.path,
+                image: imageFile,
                 emotions: emotion_results,
                 score,
               },
