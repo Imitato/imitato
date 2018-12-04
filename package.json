@@ -2,11 +2,10 @@
   "name": "imitato-server",
   "version": "1.0.0",
   "repository": "git@github.com:Imitato/imitato-serverless.git",
-  "author": "Steve Zhu <st.zhu1@gmail.com>",
   "private": true,
   "scripts": {
     "build": "webpack --config webpack.config.js",
-    "start": "nodemon server.js"
+    "start": "nodemon server/server.js"
   },
   "dependencies": {
     "axios": "^0.18.0",

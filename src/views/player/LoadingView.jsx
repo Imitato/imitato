@@ -1,7 +1,99 @@
-import React, { Component } from 'react'
-import ReactDOM from 'react-dom'
+import React from 'react'
 import styled from 'styled-components'
+
+export default class LoadingView extends React.Component {
+  render() {
+    return (
+      <Styles>
+        <div className="loading-image">
+          <div className="potato potato-left bounce" />
+          <div className="tomato bounce">
+            <div className="tomato-stem" />
+            <div className="tomato-body" />
+          </div>
+          <div className="potato potato-right bounce" />
+        </div>
+        <div className="loading-text">Loading...</div>
+      </Styles>
+    )
+  }
+}
+
 const Styles = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #3f51b5;
+  z-index: 1000;
+
+  .loading-text {
+    color: white;
+    font-weight: 600;
+    font-size: 18px;
+  }
+
+  .loading-image {
+    display: flex;
+    flex-grow: 1;
+    max-height: 130px;
+  }
+
+  .tomato {
+    position: relative;
+    top: 7px;
+    margin: 0 20px;
+  }
+
+  .tomato-body {
+    position: relative;
+    width: 24px;
+    height: 20px;
+    border-radius: 11px;
+    background-color: #ea4436;
+  }
+
+  .tomato-stem {
+    position: relative;
+    z-index: 1;
+    top: 3px;
+    left: 8px;
+    width: 8px;
+    height: 4px;
+    border-radius: 11px;
+    background-color: #34a952;
+  }
+
+  .potato {
+    position: relative;
+    width: 20px;
+    height: 26px;
+    border-radius: 11px;
+    background-color: #fbbd06;
+  }
+
+  .potato-left {
+    transform: rotate(15deg);
+  }
+
+  .potato-right {
+    transform: rotate(-15deg);
+  }
+
+  .bounce {
+    animation: 800ms bounce ease infinite;
+  }
+
+  @keyframes bounce {
+    50% {
+      transform: translateY(24px);
+    }
+  }
   @mixin fade-transition($element) {
     -webkit-transition: $element 0.15s ease-in-out;
     -moz-transition: $element 0.15s ease-in-out;
@@ -34,7 +126,7 @@ const Styles = styled.div`
     
     position: relative;
     text-align: center;
-    // transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
     -webkit-transform: translate(-50%, -50%);
     -moz-transform: translate(-50%, -50%);
     -ms-transform: translate(-50%, -50%);
@@ -117,144 +209,4 @@ const Styles = styled.div`
     80% {opacity: 0.0}
     100% { left: 82%}
   }
-  `
-class Game extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      game_id: '',
-      rounds: [],
-      roundState: -1,
-      playerScores: {}
-    }
-  }
-
-  endRound = () => {
-    var gameId = this.state.game_id
-    var data = new FormData();
-
-    var xhr = new XMLHttpRequest();
-    xhr.withCredentials = true;
-
-    xhr.addEventListener("readystatechange", () => {
-        if (xhr.readyState === 4) {
-          const rounds = JSON.parse(xhr.response).value.rounds
-          const submissions = rounds[rounds.length - 1].submissions
-          let curr = Object.assign({}, this.state.playerScores)
-          submissions.forEach(sub => {
-            if (sub.userId in curr) {
-              curr[sub.userId] += sub.score
-            } else {
-              curr[sub.userId] = sub.score
-            }
-          })
-          this.setState({roundState: 0, playerScores: curr})
-        }
-    });
-
-    xhr.open("GET", "/imitato/game/end_round?gameId=" + gameId);
-    xhr.setRequestHeader("cache-control", "no-cache");
-
-    xhr.send(data);
-  }
-
-  createRound = () => {
-    var gameId = this.state.game_id
-    var data = new FormData();
-
-    var xhr = new XMLHttpRequest();
-    xhr.withCredentials = true;
-
-    xhr.addEventListener("readystatechange", () => {
-        if (xhr.readyState === 4) {
-          this.setState({rounds: JSON.parse(xhr.response).rounds, roundState: 1})
-          let xhr2 = new XMLHttpRequest()
-          xhr2.withCredentials = true;
-
-          xhr2.open("GET", "/imitato/game/start_round?gameId=" + gameId);
-          xhr2.setRequestHeader("cache-control", "no-cache");
-
-          xhr2.send(data);
-        }
-    });
-
-    xhr.open("GET", "/imitato/game/create_round?gameId=" + gameId);
-    xhr.setRequestHeader("cache-control", "no-cache");
-
-    xhr.send(data);
-  }
-
-  createGame = () => {
-    var gameId = this.state.game_id
-    var data = new FormData();
-
-    var xhr = new XMLHttpRequest();
-    xhr.withCredentials = true;
-
-    xhr.addEventListener("readystatechange", () => {
-        if (xhr.readyState === 4) {
-            this.setState({game_id: JSON.parse(xhr.response)._id, roundState: 0})
-        }
-    });
-
-    xhr.open("GET", "/imitato/game/create");
-    xhr.setRequestHeader("cache-control", "no-cache");
-
-    xhr.send(data);
-  }
-
-  rankedPlayers = scores => {
-    const keys = Object.keys(scores)
-    console.log(scores)
-    let tups = keys.map(k => [k, scores[k]])
-    console.log(tups)
-    tups.sort((a,b) => {
-      return b[1] - a[1]
-    })
-    console.log(tups)
-    return tups
-  }
-  
-  render() {
-    return (
-    <Styles>
-      <>
-        <img src="images/imitato.png"/>
-          <h2>Imitato Gamemaster</h2>
-          <p>Set up a game of Imitato, a fun game where you imitate ideas with your friends and have the computer guess.</p>
-
-          <div>
-          <button id="createGameButton" onClick={this.createGame} className="red shiny_button">Create game</button><br />
-              <h4 id="gameIdBox">GAME ID: {this.state.game_id}</h4>
-              {this.state.roundState === 0 ? (<button id="getGameButton" onClick={this.createRound} className="red shiny_button">Start Round</button>) : (<></>)}
-              {this.state.roundState === 1 ? (<button id="endGameButton" onClick={this.endRound} className="yellow shiny_button">End Round</button>) : (<></>)}
-          </div>
-          {this.state.rounds && this.state.rounds.length ? (
-            <>
-              <div>Round {this.state.rounds.length}</div>
-              {this.state.roundState === 0 ? (<div>Rankings!</div>) : (<></>)}
-              {this.state.roundState === 1 ? (<div>Imitate These Emotions!</div>) : (<></>)}
-              <ul>
-                {this.state.roundState === 1 && Object.keys(this.state.rounds[this.state.rounds.length - 1].emotions_map).map(emotion => (
-                  this.state.rounds[this.state.rounds.length - 1].emotions_map[emotion] > 0 ? (
-                    <li>{emotion}</li>
-                  ) : (
-                    <></>
-                  )
-                ))}
-                {this.state.roundState === 0 && this.rankedPlayers(this.state.playerScores).map(p => (
-                  <div>{p[0]}</div>
-                ))}
-              </ul>
-            </>
-          ) : (
-            <></>
-          )}
-      </>
-      </Styles>
-    )
-  }
-}
-
-ReactDOM.render(<Game />, document.getElementById('root'))
-
+`
