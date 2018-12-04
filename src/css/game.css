@@ -1,0 +1,126 @@
+#root {
+  margin: 30px;
+}
+html {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.marquee-wrapper {
+  font-size: 8px;
+}
+.marquee {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  font-family: Adieu, sans-serif;
+  font-size: 1.4em;
+  color: white;
+  border-bottom: 2px solid white;
+  overflow: hidden;
+}
+.marquee > div {
+  width: 200vw;
+  min-width: 8330px;
+  height: 2em;
+  background: url('/images/marquee.png') 0 center repeat-x #3f51b5;
+  background-size: auto 2em;
+  -webkit-transform: translateX(0);
+  transform: translateX(0);
+  -webkit-animation: marquee 60s linear infinite;
+  animation: marquee 60s linear infinite;
+}
+.marquee.left,
+.marquee.right,
+.marquee.bottom {
+  display: none;
+}
+/* @media screen and (min-width: 1090px) { */
+.marquee.left,
+.marquee.right,
+.marquee.bottom {
+  display: block;
+}
+/* } */
+.marquee.top {
+  z-index: 4;
+}
+/* @media screen and (min-width: 1090px) { */
+.marquee.top {
+  left: 2.2em;
+}
+/* } */
+.marquee.bottom {
+  top: auto;
+  bottom: 0;
+  border-bottom: none;
+  border-top: 2px solid white;
+  z-index: 2;
+}
+.marquee.bottom > div {
+  -webkit-transform: translateX(-4152px);
+  transform: translateX(-4152px);
+  -webkit-animation-name: marquee-reverse;
+  animation-name: marquee-reverse;
+}
+[data-blackbox] .marquee.bottom {
+  bottom: 6em;
+}
+.marquee.left {
+  top: 100%;
+  width: 100vh;
+  -webkit-transform-origin: left top;
+  transform-origin: left top;
+  -webkit-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+  z-index: 1;
+}
+.marquee.right {
+  left: 100vw;
+  width: 100vh;
+  -webkit-transform-origin: left top;
+  transform-origin: left top;
+  -webkit-transform: rotate(90deg);
+  transform: rotate(90deg);
+  z-index: 3;
+}
+@-webkit-keyframes marquee {
+  0% {
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+  100% {
+    -webkit-transform: translateX(-4165px);
+    transform: translateX(-4165px);
+  }
+}
+@keyframes marquee {
+  0% {
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+  100% {
+    -webkit-transform: translateX(-4165px);
+    transform: translateX(-4165px);
+  }
+}
+@-webkit-keyframes marquee-reverse {
+  0% {
+    -webkit-transform: translateX(-4165px);
+    transform: translateX(-4165px);
+  }
+  100% {
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+}
+@keyframes marquee-reverse {
+  0% {
+    -webkit-transform: translateX(-4165px);
+    transform: translateX(-4165px);
+  }
+  100% {
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+}
