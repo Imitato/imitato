@@ -10,10 +10,14 @@ const USER_MEDIA_CONSTRAINTS = {
 }
 
 export default class PhotoScreen extends React.Component {
-  state = { streaming: false, photoTaken: false }
+  state = {
+    streaming: false,
+    photoTaken: false,
+  }
 
   constructor(props) {
     super(props)
+
     this.video = React.createRef()
     this.canvas = React.createRef()
   }
@@ -78,8 +82,8 @@ export default class PhotoScreen extends React.Component {
           'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
         },
         params: {
-          gameId: this.state.gameId,
-          playerId: this.state.playerId,
+          gameId: this.props.gameId,
+          playerId: this.props.playerId,
         },
       })
     }, 'image/jpeg')
