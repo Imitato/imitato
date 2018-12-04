@@ -10,6 +10,18 @@ class Game extends Component {
     playerScores: {},
   }
 
+  pictures = {
+    'Alan': ''
+  }
+
+  getPicture = key => {
+    if (key in this.pictures) {
+      return this.pictures[key]
+    } else {
+      return ''
+    }
+  }
+
   endRound = () => {
     var gameId = this.state.game_id
     var data = new FormData()
@@ -24,9 +36,12 @@ class Game extends Component {
         let curr = Object.assign({}, this.state.playerScores)
         submissions.forEach(sub => {
           if (sub.playerId in curr) {
-            curr[sub.playerId] += sub.score
-          } else {
-            curr[sub.playerId] = sub.score
+            old_score =  curr[sub.playerId][0]
+            old_image = curr[sub.playerId][1]
+
+            curr[sub.playerId] += [sub.score + old_score, sub.image]
+          } else { 
+            curr[sub.playerId] = [sub.score, sub.image]
           }
         })
         this.setState({ roundState: 0, playerScores: curr })
@@ -90,7 +105,7 @@ class Game extends Component {
   rankedPlayers = scores => {
     const keys = Object.keys(scores)
     console.log(scores)
-    let tups = keys.map(k => [k, scores[k]])
+    let tups = keys.map(k => [k, scores[k][0], scores[k][1]])
     console.log(tups)
     tups.sort((a, b) => {
       return b[1] - a[1]
@@ -156,11 +171,11 @@ class Game extends Component {
                     <></>
                   )
                 )}
-              {this.state.roundState === 0 &&
-                this.rankedPlayers(this.state.playerScores).map(p => (
-                  <div>{p[0]}</div>
-                ))}
             </ul>
+            {this.state.roundState === 0 &&
+              this.rankedPlayers(this.state.playerScores).map(p => (
+                <div>{p[0]} {p[1]} <img src={'"data:image/gif;base64,' + this.pictures[p[0]] + '"'}/></div>
+              ))}
           </>
         ) : (
           <></>
