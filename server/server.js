@@ -1,4 +1,6 @@
 const path = require('path')
+
+const { Server } = require('http')
 const express = require('express')
 const { MongoClient } = require('mongodb')
 const gameApi = require('./game_api')
@@ -17,7 +19,8 @@ const dbUrl = `mongodb://${ENV['dbUser']}:${ENV['dbPass']}@ds157740.mlab.com:577
 const mongoClient = new MongoClient(dbUrl)
 
 const app = express()
-const port = 3000
+const server = Server(app)
+const io = require('./game_socket')(server)
 
 mongoClient.connect(err => {
   const db = mongoClient.db('imitato')
@@ -33,6 +36,10 @@ mongoClient.connect(err => {
     response.sendFile(path.join(__dirname, '/dist/html/game.html'))
   })
 
+  app.get('/game_test', function(request, response) {
+    response.sendFile(path.join(__dirname, '/dist/html/game_test.html'))
+  })
+
   app.get('/player', function(request, response) {
     response.sendFile(path.join(__dirname, '/dist/html/player.html'))
   })
@@ -40,7 +47,6 @@ mongoClient.connect(err => {
   const apiRouter = gameApi(gameCollection, ENV)
   app.use('/imitato', apiRouter)
 
-  app.listen(port, () => {
-    console.log(`Listening on port ${port}.`)
-  })
+  const port = 3000
+  server.listen(port, () => console.log(`Listening on port ${port}.`))
 })
