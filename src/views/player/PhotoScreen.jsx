@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import axios from 'axios'
+import io from 'socket.io-client'
 import LoadingView from './LoadingView'
 
 const USER_MEDIA_CONSTRAINTS = {
@@ -13,10 +14,18 @@ export default class PhotoScreen extends React.Component {
   state = {
     streaming: false,
     photoTaken: false,
+    message: 'Waiting for players to join...',
   }
 
   constructor(props) {
     super(props)
+
+    const { gameId, playerId } = this.props
+    const query = { role: 'player', gameId, playerId }
+    this.socket = io({ query })
+    this.socket.on('round start', () => {
+      this.setState({ message: 'Take a picture!' })
+    })
 
     this.video = React.createRef()
     this.canvas = React.createRef()
@@ -38,6 +47,7 @@ export default class PhotoScreen extends React.Component {
     return (
       <Styles>
         {!this.state.streaming && <LoadingView />}
+        {this.state.message && <div id="message">{this.state.message}</div>}
         <div className={this.state.photoTaken ? 'hidden' : undefined}>
           <video ref={this.video} className="photo" autoPlay playsInline>
             Video stream not available.
@@ -96,6 +106,17 @@ const Styles = styled.div`
   height: 100vh;
   overflow: hidden;
   border: none;
+
+  #message {
+    background-color: white;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    padding: 0.5em;
+    text-align: center;
+  }
 
   .photo {
     object-fit: cover;
