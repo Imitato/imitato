@@ -35,7 +35,7 @@ export default class SetupScreen extends React.Component {
   }
 
   _onChange = event => {
-    this.setState({ [event.target.name]: event.target.value })
+    this.setState({ [event.target.name]: event.target.value.toUpperCase() })
   }
 
   _onSubmit = () => {

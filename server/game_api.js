@@ -23,6 +23,17 @@ const EMOTIONS = [
   'surprise',
 ]
 
+const NO_EMOTION = {
+    'anger': 0,
+    'contempt': 0,
+    'disgust': 0,
+    'fear': 0,
+    'happiness': 0,
+    'neutral': 0,
+    'sadness': 0,
+    'surprise': 0,
+}
+
 module.exports = function(collection, ENV) {
   const router = express.Router()
   const upload = multer({ dest: 'uploads/', preservePath: true })
@@ -160,11 +171,10 @@ module.exports = function(collection, ENV) {
     const imageFile = req.file
     const { playerId, gameId } = req.query
 
-    processImage(imageFile).then(results => {
+    processImage(imageFile).then(emotion_results => {
       collection.findOne({ _id: gameId }).then(game => {
         let lastRound = game.rounds.length - 1
         let emotions_map = game.rounds[lastRound].emotions_map
-        let emotion_results = results ? results.emotion : {}
 
         // only let a user send 1 photo per round
         for (let submission of game.rounds[lastRound].submissions) {
@@ -180,7 +190,7 @@ module.exports = function(collection, ENV) {
         }
 
         let score = 0
-        if (!results) {
+        if (emotion_results == null) {
           for (let i = 0; i < EMOTIONS.length; i++) {
             emotion_results[EMOTIONS[i]] = 0
           }
@@ -291,7 +301,7 @@ function processImage(imageFile) {
     data: img,
   })
     .then(function(response) {
-      return response.data[0].faceAttributes
+      return response.data.length == 0 ? NO_EMOTION : response.data[0].faceAttributes.emotion
     })
     .catch(function(error) {
       console.log(error)
