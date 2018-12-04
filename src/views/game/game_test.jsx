@@ -14,7 +14,7 @@ class Game extends Component {
 
   createGame = () => {
     axios.get('/imitato/game/create').then(res => {
-      const gameId = res.data
+      const gameId = res.data._id
       if (this.socket) {
         this.socket.disconnect()
       }
