@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import axios from 'axios'
 
 export default class SetupScreen extends React.Component {
   state = { gameId: '', playerId: '' }
@@ -38,7 +39,19 @@ export default class SetupScreen extends React.Component {
   }
 
   _onSubmit = () => {
-    this.props.onJoin(Object.assign({}, this.state))
+    const myState = this.state
+    const myProps = this.props
+    const data = new FormData()
+    axios.get('/imitato/game/exists?gameId=' + myState.gameId, data, {
+    }).then(function (response) {
+      if (response.data == true) {
+        myProps.onJoin(Object.assign({}, myState))
+      } else if (response.data == false) {
+        console.log('Invalid game code.')
+      } else {
+        console.log('Stuff went wrong.')
+      }
+    })
   }
 }
 
