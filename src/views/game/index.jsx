@@ -25,6 +25,14 @@ const Styles = styled.div`
       background: #FBBD06;
     }
   }
+  .content {
+    max-width: 838px;
+    margin: auto;
+    text-align: center;
+  }
+  * {
+    font-family: 'Montserrat', sans-serif;
+  }
   .shiny_button {
     font-family: 'Montserrat', sans-serif;
     font-weight: 300;
@@ -34,8 +42,6 @@ const Styles = styled.div`
     
     position: relative;
     text-align: center;
-    // transform: translate(-50%, -50%);
-    -webkit-transform: translate(-50%, -50%);
     -moz-transform: translate(-50%, -50%);
     -ms-transform: translate(-50%, -50%);
     -o-transform: translate(-50%, -50%);
@@ -217,29 +223,30 @@ class Game extends Component {
 
   render() {
     return (
-      <>
+      <Styles>
+      <div class="content">
         <img src="images/imitato.png" />
-        <h2>Imitato Gamemaster</h2>
+        <h2>Imitato Game Master</h2>
         <p>
-          Set up a game of Imitato, a fun game where you imitate ideas with your
-          friends and have the computer guess.
+          Play a game of Imitato, a fun game where you make faces with your
+          friends and have the computer guess your emotion.
         </p>
 
         <div>
-          <button id="createGameButton" onClick={this.createGame}>
+          <button id="createGameButton" onClick={this.createGame} className="yellow shiny_button">
             Create game
           </button>
           <br />
           <h4 id="gameIdBox">GAME ID: {this.state.game_id}</h4>
           {this.state.roundState === 0 ? (
-            <button id="getGameButton" onClick={this.createRound}>
+            <button id="getGameButton" onClick={this.createRound} className="red shiny_button">
               Start Round
             </button>
           ) : (
             <></>
           )}
           {this.state.roundState === 1 ? (
-            <button id="endGameButton" onClick={this.endRound}>
+            <button id="endGameButton" onClick={this.endRound} className="red shiny_button">
               End Round
             </button>
           ) : (
@@ -277,7 +284,8 @@ class Game extends Component {
         ) : (
           <></>
         )}
-      </>
+      </div>
+      </Styles>
     )
   }
 }
