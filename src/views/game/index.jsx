@@ -174,7 +174,7 @@ class Game extends Component {
             </ul>
             {this.state.roundState === 0 &&
               this.rankedPlayers(this.state.playerScores).map(p => (
-                <div>{p[0]} {p[1]} <img src={"/images?" + p[2].filename}/></div>
+                <div>{p[0]} {p[1]} <img src={"/images?id=" + p[2].filename}/></div>
               ))}
           </>
         ) : (
