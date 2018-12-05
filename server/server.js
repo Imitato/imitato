@@ -44,6 +44,11 @@ mongoClient.connect(err => {
     response.sendFile(path.join(__dirname, '/dist/html/player.html'))
   })
 
+  app.get('/images', function(request, response) {
+    const { id } = request.query 
+    response.sendFile(path.join(__dirname, '/uploads/' + id))
+  })
+
   const apiRouter = gameApi(gameCollection, ENV)
   app.use('/imitato', apiRouter)
 
