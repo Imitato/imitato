@@ -45,7 +45,7 @@ mongoClient.connect(err => {
   })
 
   app.get('/images', function(request, response) {
-    const { id } = request.query 
+    const { id } = request.query
     response.sendFile(path.join(__dirname, '../uploads/' + id))
   })
 

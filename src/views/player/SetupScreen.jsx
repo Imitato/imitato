@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import axios from 'axios'
 
 export default class SetupScreen extends React.Component {
-  state = { gameId: '', playerId: '' }
+  state = { gameId: '', playerId: '', message: '' }
 
   render() {
     return (
@@ -29,6 +29,7 @@ export default class SetupScreen extends React.Component {
             onChange={this._onChange}
           />
           <button onClick={this._onSubmit}>Join</button>
+          <div className="message">{this.state.message}</div>
         </div>
       </Styles>
     )
@@ -39,17 +40,17 @@ export default class SetupScreen extends React.Component {
   }
 
   _onSubmit = () => {
-    const myState = this.state
-    const myProps = this.props
-    const data = new FormData()
-    axios.get('/imitato/game/exists?gameId=' + myState.gameId, data, {
-    }).then(function (response) {
-      if (response.data == true) {
-        myProps.onJoin(Object.assign({}, myState))
-      } else if (response.data == false) {
-        console.log('Invalid game code.')
+    if (this.state.playerId.length === 0) {
+      this.setState({ message: 'Invalid name.' })
+      return
+    }
+
+    const { gameId } = this.state
+    axios.get('/imitato/game/exists', { params: { gameId } }).then(response => {
+      if (response.data) {
+        this.props.onJoin(Object.assign({}, this.state))
       } else {
-        console.log('Stuff went wrong.')
+        this.setState({ message: 'Invalid game code.' })
       }
     })
   }
@@ -93,5 +94,10 @@ const Styles = styled.div`
     font-size: 20px;
     font-weight: 600;
     cursor: pointer;
+  }
+
+  .message {
+    margin-top: 1em;
+    color: red;
   }
 `

@@ -24,14 +24,14 @@ const EMOTIONS = [
 ]
 
 const NO_EMOTION = {
-    'anger': 0,
-    'contempt': 0,
-    'disgust': 0,
-    'fear': 0,
-    'happiness': 0,
-    'neutral': 0,
-    'sadness': 0,
-    'surprise': 0,
+  anger: 0,
+  contempt: 0,
+  disgust: 0,
+  fear: 0,
+  happiness: 0,
+  neutral: 0,
+  sadness: 0,
+  surprise: 0,
 }
 
 module.exports = function(collection, ENV) {
@@ -87,11 +87,7 @@ module.exports = function(collection, ENV) {
   router.get('/game/exists', (req, res) => {
     const { gameId } = req.query
     collection.findOne({ _id: gameId }).then(game => {
-      if (game == null) {
-        res.status(200).send(`false`)
-      } else {
-        res.status(200).send(`true`)
-      }
+      res.status(200).send(game != null)
     })
   })
 
@@ -295,7 +291,9 @@ function processImage(imageFile) {
     data: img,
   })
     .then(function(response) {
-      return response.data.length == 0 ? NO_EMOTION : response.data[0].faceAttributes.emotion
+      return response.data.length == 0
+        ? NO_EMOTION
+        : response.data[0].faceAttributes.emotion
     })
     .catch(function(error) {
       console.log(error)
