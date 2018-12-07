@@ -32,8 +32,8 @@ mongoClient.connect(err => {
   app.use(express.static(path.join(__dirname, '/assets')))
 
   // http://expressjs.com/en/starter/basic-routing.html
-  app.get('/game', function(request, response) {
-    response.sendFile(path.join(__dirname, '/dist/html/game.html'))
+  app.get('/', function(request, response) {
+    response.sendFile(path.join(__dirname, '/dist/html/home.html'))
   })
 
   app.get('/game_test', function(request, response) {
@@ -42,6 +42,10 @@ mongoClient.connect(err => {
 
   app.get('/player', function(request, response) {
     response.sendFile(path.join(__dirname, '/dist/html/player.html'))
+  })
+
+  app.get('/game', function(request, response) {
+    response.sendFile(path.join(__dirname, '/dist/html/game.html'))
   })
 
   app.get('/images', function(request, response) {
