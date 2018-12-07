@@ -8,7 +8,6 @@ module.exports = {
   mode: 'development',
   entry: {
     game: resolve('src/views/game/index.jsx'),
-    game_test: resolve('src/views/game/game_test.jsx'),
     player: resolve('src/views/player/index.jsx'),
   },
   output: {
