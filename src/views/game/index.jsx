@@ -122,18 +122,27 @@ class Game extends Component {
                 <>
                   <div>Rankings!</div>
                   <div id="ranking-slide">
-                    {this.rankedPlayers(this.state.playerScores).map((p, i) => (
-                      <div className="ranking-image">
-                        <img src={`/images?id=` + p[2].filename} />
-                        <div className="ranking-number">{i + 1}</div>
-                      </div>
-                    ))}
+                    {this.rankedPlayers(this.state.playerScores).map((p, i) => {
+                      const dim = `${Math.round(324 * Math.pow(0.9, i))}px`
+                      return (
+                        <div
+                          className="ranking-image"
+                          style={{ width: dim, height: dim }}
+                          key={i}
+                        >
+                          <img src={`/images?id=` + p[2].filename} />
+                          <div className="ranking-number">{i + 1}</div>
+                        </div>
+                      )
+                    })}
                   </div>
                   <div className="confetti">
                     {(() => {
                       const confettiElems = []
                       for (let i = 0; i < 13; i++) {
-                        confettiElems.push(<div className="confetti-piece" />)
+                        confettiElems.push(
+                          <div key={i} className="confetti-piece" />
+                        )
                       }
                       return confettiElems
                     })()}
