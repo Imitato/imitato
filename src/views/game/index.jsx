@@ -162,7 +162,7 @@ class Game extends Component {
                     <ol>
                   {this.rankedPlayers(this.state.playerScores).map(p => (
                     <div>
-                      <li><a href=""><div className="big-rank"><img src={`/images?id=` + p[2].filename} width={this.widthMap[p[4]]} height={this.widthMap[p[4]]} align="center"/></div> </a></li>
+                      <li><a href=""><img src={`/images?id=` + p[2].filename} className="small-rank" width={this.widthMap[p[4]]} height={this.widthMap[p[4]]} align="center"/> </a></li>
                     </div>
                   ))}
                     </ol>
@@ -558,10 +558,14 @@ const Styles = styled.div`
     margin:6px 6px
   }
   #small-rank {
-    width:150px;
+    /* width:150px;
     height:150px;
     text-align: center;
-    margin:6px 6px;
+    margin:6px 6px; */
+    max-width:100%;
+    max-height:100%;
+    height: auto;
+    width:auto;
   }
   `
 
