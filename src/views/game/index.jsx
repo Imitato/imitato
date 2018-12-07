@@ -145,6 +145,23 @@ class Game extends Component {
               ) : (
                 <>
                   <div>Rankings!</div>
+                  <div id="ranking-slide">
+                    <div>
+                      {this.rankedPlayers(this.state.playerScores).map(p => (
+                        <div>
+                          <a href="">
+                            <img
+                              src={`/images?id=` + p[2].filename}
+                              className="small-rank"
+                              width={this.widthMap[p[4]]}
+                              height={this.widthMap[p[4]]}
+                              align="center"
+                            />{' '}
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                   <div className="confetti">
                     {(() => {
                       const confettiElems = []
@@ -153,28 +170,10 @@ class Game extends Component {
                       }
                       return confettiElems
                     })()}
-                    <div id="ranking-slide">
-                      <ol>
-                        {this.rankedPlayers(this.state.playerScores).map(p => (
-                          <div>
-                            <li>
-                              <a href="">
-                                <img
-                                  src={`/images?id=` + p[2].filename}
-                                  className="small-rank"
-                                  width={this.widthMap[p[4]]}
-                                  height={this.widthMap[p[4]]}
-                                  align="center"
-                                />{' '}
-                              </a>
-                            </li>
-                          </div>
-                        ))}
-                      </ol>
-                    </div>
                   </div>
                 </>
-              )}
+              )
+              }
             </div>
           )}
         </div>
@@ -327,6 +326,7 @@ const Styles = styled.div`
   }
 
   .confetti {
+    position: absolute;
     width: 100%;
     height: 400px;
   }
@@ -474,10 +474,6 @@ const Styles = styled.div`
   }
 
   #ranking-slide {
-    position: relative;
-    width: 692px;
-    height: 338px;
-    margin: 30px auto;
   }
 
   #ranking-slide > :not(a) {
