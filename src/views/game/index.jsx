@@ -71,13 +71,8 @@ class Game extends Component {
 
   rankedPlayers = scores => {
     const keys = Object.keys(scores)
-    console.log(scores)
-    let tups = keys.map(k => [k, scores[k][0], scores[k][1]])
-    console.log(tups)
-    tups.sort((a, b) => {
-      return b[1] - a[1]
-    })
-    console.log(tups)
+    const tups = keys.map(k => [k, scores[k][0], scores[k][1]])
+    tups.sort((a, b) => b[1] - a[1])
     return tups
   }
 
@@ -102,15 +97,7 @@ class Game extends Component {
           Play a game of Imitato, a fun game where you make faces with your
           friends to see who can match the emotions the best.
         </p>
-        <div className="game-data">
-          <div>
-            <h4 id="gameIdBox">Game Code: {this.state.gameId}</h4>
-          </div>
-          <div>
-            <h4>Players</h4>
-            <div>{this.renderPlayersList()}</div>
-          </div>
-        </div>
+        <h4 className="game-code">Game Code: {this.state.gameId}</h4>
         {!this.state.roundStarted ? (
           <button onClick={this.createRound} className="red shiny-button">
             Start Round
@@ -120,26 +107,36 @@ class Game extends Component {
             End Round
           </button>
         )}
-        {this.state.rounds && this.state.rounds.length ? (
-          <>
-            <h3>Round {this.state.rounds.length}</h3>
-            {this.state.roundStarted && (
-              <>
-                <div style={{ marginBottom: '0.8em' }}>
-                  Imitate These Emotions!
-                </div>
-                <div>{this.renderEmotionsList()}</div>
-              </>
-            )}
-            {!this.state.roundStarted ? <div>Rankings!</div> : <></>}
-            {!this.state.roundStarted &&
-              this.rankedPlayers(this.state.playerScores).map(p => (
-                <div>
-                  {p[0]} {p[1]} <img src={'/images?id=' + p[2].filename} />
-                </div>
-              ))}
-          </>
-        ) : null}
+        <div className="game-data">
+          <div>
+            <h3>Players</h3>
+            <div>{this.renderPlayersList()}</div>
+          </div>
+          {this.state.rounds.length === 0 ? (
+            <div>Waiting for round to start.</div>
+          ) : (
+            <div>
+              <h3>Round {this.state.rounds.length}</h3>
+              {this.state.roundStarted ? (
+                <>
+                  <div style={{ marginBottom: '0.8em' }}>
+                    Imitate These Emotions!
+                  </div>
+                  <div>{this.renderEmotionsList()}</div>
+                </>
+              ) : (
+                <>
+                  <div>Rankings!</div>
+                  {this.rankedPlayers(this.state.playerScores).map(p => (
+                    <div>
+                      {p[0]} {p[1]} <img src={`/images?id={p[2].filename}`} />
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
+          )}
+        </div>
       </Styles>
     )
   }
@@ -175,15 +172,29 @@ const Styles = styled.div`
   max-width: 500px;
   margin: auto;
   text-align: center;
+
+  h3,
   h4 {
     margin: 0;
   }
-  .title-image {
-    width: 100%;
+
+  h3 {
+    margin-bottom: 0.8em;
   }
+
+  .title-image {
+    max-width: 100%;
+    max-height: 150px;
+  }
+
   .description {
     margin: 0 auto;
   }
+
+  .game-code {
+    margin: 1em 0;
+  }
+
   .game-data {
     display: flex;
     justify-content: center;
@@ -193,6 +204,7 @@ const Styles = styled.div`
       flex-basis: 0;
     }
   }
+
   .shiny-button {
     padding: 0.6em 1.8em;
     border-radius: 48px;
@@ -201,6 +213,7 @@ const Styles = styled.div`
     transition: background-color 0.15s ease-in-out;
     cursor: pointer;
   }
+
   .red {
     color: #fbbd06;
     border: 3px solid #ea4436;
@@ -209,6 +222,7 @@ const Styles = styled.div`
       background-color: #ea4436;
     }
   }
+
   .yellow {
     color: #ea4436;
     border: 3px solid #fbbd06;
@@ -251,6 +265,7 @@ const Styles = styled.div`
     animation-iteration-count: infinite;
     animation-delay: 1s;
   }
+
   @keyframes move {
     0% {
       left: 0;
