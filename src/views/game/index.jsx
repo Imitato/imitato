@@ -2,13 +2,15 @@ import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import styled from 'styled-components'
 import axios from 'axios'
+import io from 'socket.io-client'
 
 class Game extends Component {
   state = {
     gameId: '',
     rounds: [],
-    roundState: -1,
+    roundStarted: false,
     playerScores: {},
+    players: [],
   }
 
   pictures = {
@@ -21,6 +23,24 @@ class Game extends Component {
     } else {
       return ''
     }
+  }
+
+  createRound = () => {
+    const { gameId } = this.state
+    const query = { params: { gameId } }
+    axios
+      .get('/imitato/game/create_round', query)
+      .then(response => {
+        const { rounds } = response.data
+        this.setState({ rounds })
+        axios
+          .get('/imitato/game/start_round', query)
+          .then(response => {
+            this.setState({ roundStarted: true })
+          })
+          .catch(error => console.error(error))
+      })
+      .catch(error => console.error(error))
   }
 
   endRound = () => {
@@ -44,34 +64,9 @@ class Game extends Component {
             scores[playerId] = [sub.score, sub.image]
           }
         })
-        this.setState({ roundState: 0, playerScores: curr })
+        this.setState({ roundStarted: false, playerScores: scores })
       })
       .catch(error => console.log(error))
-  }
-
-  createRound = () => {
-    const { gameId } = this.state
-    const query = { params: { gameId } }
-    axios
-      .get('/imitato/game/create_round', query)
-      .then(response => {
-        const { rounds } = response.data
-        this.setState({ rounds })
-        axios
-          .get('/imitato/game/start_round', query)
-          .then(response => {
-            this.setState({ roundState: 1 })
-          })
-          .catch(error => console.error(error))
-      })
-      .catch(error => console.error(error))
-  }
-
-  createGame = () => {
-    axios.get('/imitato/game/create').then(response => {
-      const gameId = response.data._id
-      this.setState({ gameId, roundState: 0 })
-    })
   }
 
   rankedPlayers = scores => {
@@ -86,125 +81,152 @@ class Game extends Component {
     return tups
   }
 
+  componentDidMount() {
+    // create game
+    axios
+      .get('/imitato/game/create')
+      .then(response => {
+        const gameId = response.data._id
+        this.socket = io({ query: { role: 'gamemaster', gameId } })
+        this.socket.on('connect', () => this.setState({ gameId }))
+        this.socket.on('players', players => this.setState({ players }))
+      })
+      .catch(error => console.error(error))
+  }
+
   render() {
     return (
       <Styles>
-        <div className="container">
-          <img className="title-image" src="images/imitato.png" />
-          <h2>Imitato Game Master</h2>
-          <p>
-            Play a game of Imitato, a fun game where you make faces with your
-            friends and have the computer guess your emotion.
-          </p>
-
+        <img className="title-image" src="images/imitato.png" />
+        <p className="description">
+          Play a game of Imitato, a fun game where you make faces with your
+          friends to see who can match the emotions the best.
+        </p>
+        <div className="game-data">
           <div>
-            <button
-              id="createGameButton"
-              onClick={this.createGame}
-              className="yellow shiny-button"
-            >
-              Create game
-            </button>
-            <br />
-            <h4 id="gameIdBox">GAME ID: {this.state.gameId}</h4>
-            {this.state.roundState === 0 ? (
-              <button
-                id="getGameButton"
-                onClick={this.createRound}
-                className="red shiny-button"
-              >
-                Start Round
-              </button>
-            ) : (
-              <></>
-            )}
-            {this.state.roundState === 1 ? (
-              <button
-                id="endGameButton"
-                onClick={this.endRound}
-                className="red shiny-button"
-              >
-                End Round
-              </button>
-            ) : (
-              <></>
-            )}
+            <h4 id="gameIdBox">Game Code: {this.state.gameId}</h4>
           </div>
-          {this.state.rounds && this.state.rounds.length ? (
-            <>
-              <div>Round {this.state.rounds.length}</div>
-              {this.state.roundState === 0 ? <div>Rankings!</div> : <></>}
-              {this.state.roundState === 1 ? (
-                <div>Imitate These Emotions!</div>
-              ) : (
-                <></>
-              )}
-              <ul>
-                {this.state.roundState === 1 &&
-                  Object.keys(
-                    this.state.rounds[this.state.rounds.length - 1].emotions_map
-                  ).map(emotion =>
-                    this.state.rounds[this.state.rounds.length - 1]
-                      .emotions_map[emotion] > 0 ? (
-                      <li>{emotion}</li>
-                    ) : (
-                      <></>
-                    )
-                  )}
-              </ul>
-              {this.state.roundState === 0 &&
-                this.rankedPlayers(this.state.playerScores).map(p => (
-                  <div>
-                    {p[0]} {p[1]} <img src={'/images?id=' + p[2].filename} />
-                  </div>
-                ))}
-            </>
-          ) : (
-            <></>
-          )}
+          <div>
+            <h4>Players</h4>
+            <div>{this.renderPlayersList()}</div>
+          </div>
         </div>
+        {!this.state.roundStarted ? (
+          <button onClick={this.createRound} className="red shiny-button">
+            Start Round
+          </button>
+        ) : (
+          <button onClick={this.endRound} className="red shiny-button">
+            End Round
+          </button>
+        )}
+        {this.state.rounds && this.state.rounds.length ? (
+          <>
+            <h3>Round {this.state.rounds.length}</h3>
+            {this.state.roundStarted && (
+              <>
+                <div style={{ marginBottom: '0.8em' }}>
+                  Imitate These Emotions!
+                </div>
+                <div>{this.renderEmotionsList()}</div>
+              </>
+            )}
+            {!this.state.roundStarted ? <div>Rankings!</div> : <></>}
+            {!this.state.roundStarted &&
+              this.rankedPlayers(this.state.playerScores).map(p => (
+                <div>
+                  {p[0]} {p[1]} <img src={'/images?id=' + p[2].filename} />
+                </div>
+              ))}
+          </>
+        ) : null}
       </Styles>
     )
+  }
+
+  renderPlayersList() {
+    const playerElems = []
+    for (const [playerId, player] of Object.entries(this.state.players)) {
+      if (player.connected) {
+        playerElems.push(<div key={playerId}>{playerId}</div>)
+      }
+    }
+    return playerElems
+  }
+
+  renderEmotionsList() {
+    const { rounds } = this.state
+    const { emotions_map } = rounds[rounds.length - 1]
+    const emotionElems = []
+    for (const [emotion, value] of Object.entries(emotions_map)) {
+      if (value > 0) {
+        emotionElems.push(
+          <span className="emotion" key={emotion}>
+            {emotion}
+          </span>
+        )
+      }
+    }
+    return emotionElems
   }
 }
 
 const Styles = styled.div`
-  .container {
-    max-width: 838px;
-    margin: auto;
-    text-align: center;
+  max-width: 500px;
+  margin: auto;
+  text-align: center;
+  h4 {
+    margin: 0;
   }
   .title-image {
-    max-width: 500px;
     width: 100%;
   }
+  .description {
+    margin: 0 auto;
+  }
+  .game-data {
+    display: flex;
+    justify-content: center;
+    margin: 1em auto;
+    > div {
+      flex-grow: 1;
+      flex-basis: 0;
+    }
+  }
   .shiny-button {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 300;
-    text-decoration: none;
-    padding: 14px;
+    padding: 0.6em 1.8em;
     border-radius: 48px;
-
-    position: relative;
+    font-weight: 600;
     text-align: center;
     transition: background-color 0.15s ease-in-out;
+    cursor: pointer;
   }
   .red {
     color: #fbbd06;
     border: 3px solid #ea4436;
-    background: #ea5034;
+    background-color: #ea5034;
     &:hover {
-      background: #ea4436;
+      background-color: #ea4436;
     }
   }
   .yellow {
     color: #ea4436;
     border: 3px solid #fbbd06;
-    background: #fbce05;
+    background-color: #fbce05;
     &:hover {
-      background: #fbbd06;
+      background-color: #fbbd06;
     }
   }
+
+  .emotion {
+    display: inline-block;
+    margin: 0 0.3em 0.4em;
+    padding: 0.2em 0.6em;
+    background-color: #3f51b5;
+    color: white;
+    font-size: 20px;
+  }
+
   i {
     position: absolute;
     opacity: 0;
