@@ -50,9 +50,7 @@ export default class PhotoScreen extends React.Component {
         {!this.state.streaming && <LoadingView />}
         {this.state.message && <div id="message">{this.state.message}</div>}
         <div
-          className={`photo-container ${
-            this.state.photoTaken ? 'hidden' : undefined
-          }`}
+          className={`photo-container ${this.state.photoTaken ? 'hidden' : ''}`}
         >
           <video ref={this.video} className="photo" autoPlay playsInline>
             Video stream not available.
@@ -62,9 +60,7 @@ export default class PhotoScreen extends React.Component {
           )}
         </div>
         <div
-          className={`photo-container ${
-            this.state.photoTaken ? undefined : 'hidden'
-          }`}
+          className={`photo-container ${this.state.photoTaken ? '' : 'hidden'}`}
         >
           <canvas ref={this.canvas} className="photo" />
           <button id="retake-button" onClick={this.retakePhoto} />
@@ -136,6 +132,7 @@ const Styles = styled.div`
   .photo-container {
     position: relative;
     flex-grow: 1;
+    overflow: hidden;
   }
 
   .photo {
