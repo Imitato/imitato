@@ -13,18 +13,6 @@ class Game extends Component {
     players: [],
   }
 
-  widthMap = {
-    0: '324px',
-    1: '324px',
-    2: '324px',
-    3: '324px',
-    4: '324px',
-    // 1: "150px",
-    // 2: "150px",
-    // 3: "150px",
-    // 4: "150px"
-  }
-
   createRound = () => {
     const { gameId } = this.state
     const query = { params: { gameId } }
@@ -134,21 +122,12 @@ class Game extends Component {
                 <>
                   <div>Rankings!</div>
                   <div id="ranking-slide">
-                    <div>
-                      {this.rankedPlayers(this.state.playerScores).map(p => (
-                        <div>
-                          <a href="">
-                            <img
-                              src={`/images?id=` + p[2].filename}
-                              className="small-rank"
-                              width={this.widthMap[p[4]]}
-                              height={this.widthMap[p[4]]}
-                              align="center"
-                            />{' '}
-                          </a>
-                        </div>
-                      ))}
-                    </div>
+                    {this.rankedPlayers(this.state.playerScores).map((p, i) => (
+                      <div className="ranking-image">
+                        <img src={`/images?id=` + p[2].filename} />
+                        <div className="ranking-number">{i + 1}</div>
+                      </div>
+                    ))}
                   </div>
                   <div className="confetti">
                     {(() => {
@@ -160,8 +139,7 @@ class Game extends Component {
                     })()}
                   </div>
                 </>
-              )
-              }
+              )}
             </div>
           )}
         </div>
@@ -269,48 +247,46 @@ const Styles = styled.div`
     font-size: 20px;
   }
 
-  i {
-    position: absolute;
-    opacity: 0;
-    top: 0;
-    left: 0;
-
-    background: linear-gradient(
-      to right,
-      rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.03) 1%,
-      rgba(255, 255, 255, 0.6) 30%,
-      rgba(255, 255, 255, 0.85) 50%,
-      rgba(255, 255, 255, 0.85) 70%,
-      rgba(255, 255, 255, 0.85) 71%,
-      rgba(255, 255, 255, 0) 100%
-    ); /* W3C */
-
-    width: 15%;
-    height: 100%;
-    transform: skew(-10deg, 0deg);
-    animation: move 2s;
-    animation-iteration-count: infinite;
-    animation-delay: 1s;
+  body {
+    background: #ccc;
   }
 
-  @keyframes move {
-    0% {
-      left: 0;
-      opacity: 0;
+  .ranking-image {
+    position: relative;
+    display: block;
+    width: 324px;
+    height: 324px;
+    background: #efefef;
+    border-radius: 5px;
+    padding: 0 5px 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    &:hover {
+      background: #fbbd06;
     }
-    5% {
-      opacity: 0;
-    }
-    48% {
-      opacity: 0.2;
-    }
-    80% {
-      opacity: 0;
-    }
-    100% {
-      left: 82%;
-    }
+  }
+
+  .ranking-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ranking-number {
+    content: counter(number);
+    counter-increment: number;
+    position: absolute;
+    top: 7px;
+    left: 7px;
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    line-height: 22px;
+    color: #fff;
+    background: #ea4436;
+    font-size: 1.2rem;
+    text-align: center;
+    z-index: 1;
   }
 
   .confetti {
@@ -455,99 +431,6 @@ const Styles = styled.div`
     to {
       transform: translateY(400px);
     }
-  }
-
-  body {
-    background: #ccc;
-  }
-
-  #ranking-slide {
-  }
-
-  #ranking-slide > :not(a) {
-    overflow: hidden;
-    white-space: nowrap;
-  }
-
-  #ranking-slide > a {
-    cursor: pointer;
-  }
-
-  #ranking-slide li {
-    display: inline-block;
-    margin: 0 16px 0 0;
-  }
-
-  #ranking-slide li,
-  #ranking-slide li > a {
-    width: 162px;
-    height: 162px;
-  }
-
-  #ranking-slide li > a {
-    cursor: pointer;
-    display: block;
-    background: #efefef;
-    border-radius: 5px;
-  }
-
-  #ranking-slide li > a:hover {
-    background: #fbbd06;
-  }
-
-  #ranking-slide li:nth-child(n + 2):nth-child(-n + 3) {
-    top: -172px;
-  }
-
-  #ranking-slide li:nth-child(4) {
-    margin: 175px 16px 0 -356px;
-  }
-
-  #ranking-slide li:first-child,
-  #ranking-slide li:first-child > a {
-    width: 336px;
-    height: 335px;
-  }
-
-  #ranking-slide {
-    counter-reset: number;
-  }
-
-  #ranking-slide li {
-    position: relative;
-  }
-
-  #ranking-slide li:before {
-    content: counter(number);
-    counter-increment: number;
-    position: absolute;
-    top: 7px;
-    left: 7px;
-    display: inline-block;
-    width: 22px;
-    height: 22px;
-    line-height: 22px;
-    color: #fff;
-    background: #ea4436;
-    font-size: 1.2rem;
-    text-align: center;
-    z-index: 1;
-  }
-
-  #ranking-slide li:first-child:before {
-    width: 25px;
-    height: 25px;
-    line-height: 25px;
-    font-size: 1.5rem;
-  }
-  #big-rank {
-    width: 324px;
-    height: 324px;
-    text-align: center;
-    margin: 6px 6px;
-  }
-  .small-rank {
-    object-fit: cover;
   }
 `
 
