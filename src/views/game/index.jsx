@@ -106,55 +106,61 @@ class Game extends Component {
             <h3>Players</h3>
             <div>{this.renderPlayersList()}</div>
           </div>
-          {this.state.rounds.length === 0 ? (
-            <div>Waiting for round to start.</div>
-          ) : (
-            <div className="round-container">
-              <h3>Round {this.state.rounds.length}</h3>
-              {this.state.roundStarted ? (
-                <>
-                  <div style={{ marginBottom: '0.8em' }}>
-                    Imitate These Emotions!
-                  </div>
-                  <div>{this.renderEmotionsList()}</div>
-                </>
-              ) : (
-                <>
-                  <div style={{ paddingBottom: '0.8em' }}>Rankings!</div>
-                  <div className="ranking-images">
-                    {this.rankedPlayers(this.state.playerScores).map((p, i) => {
-                      const player = p[0]
-                      const score = Number(p[1].toFixed(4))
-                      const dim = `${Math.round(324 * Math.pow(0.9, i))}px`
-                      return (
-                        <div className="ranking-image" key={i}>
-                          <img
-                            style={{ width: dim, height: dim }}
-                            src={`/images?id=` + p[2].filename}
-                          />
-                          <div>
-                            {player}'S SCORE: {score}
-                          </div>
-                          <div className="ranking-number">{i + 1}</div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                  <div className="confetti">
-                    {(() => {
-                      const confettiElems = []
-                      for (let i = 0; i < 13; i++) {
-                        confettiElems.push(
-                          <div key={i} className="confetti-piece" />
-                        )
-                      }
-                      return confettiElems
-                    })()}
-                  </div>
-                </>
-              )}
-            </div>
-          )}
+          <div className="round-container">
+            {this.state.rounds.length === 0 ? (
+              <div>Waiting for round to start.</div>
+            ) : (
+              <>
+                <h3>Round {this.state.rounds.length}</h3>
+                {this.state.roundStarted ? (
+                  <>
+                    <div style={{ marginBottom: '0.8em' }}>
+                      Imitate These Emotions!
+                    </div>
+                    <div>{this.renderEmotionsList()}</div>
+                  </>
+                ) : (
+                  <>
+                    <div style={{ paddingBottom: '0.8em' }}>Rankings!</div>
+                    <div className="ranking-images">
+                      {this.rankedPlayers(this.state.playerScores).map(
+                        (p, i) => {
+                          const player = p[0]
+                          const score = Number(p[1].toFixed(4))
+                          const dim = `${Math.round(324 * Math.pow(0.9, i))}px`
+                          return (
+                            <div className="ranking-image" key={i}>
+                              <img
+                                style={{ width: dim, height: dim }}
+                                src={`/images?id=` + p[2].filename}
+                              />
+                              <div>
+                                {player}'S SCORE: {score}
+                              </div>
+                              <div className="ranking-number">{i + 1}</div>
+                            </div>
+                          )
+                        }
+                      )}
+                    </div>
+                    {!this.state.roundStarted && (
+                      <div className="confetti">
+                        {(() => {
+                          const confettiElems = []
+                          for (let i = 0; i < 13; i++) {
+                            confettiElems.push(
+                              <div key={i} className="confetti-piece" />
+                            )
+                          }
+                          return confettiElems
+                        })()}
+                      </div>
+                    )}
+                  </>
+                )}
+              </>
+            )}
+          </div>
         </div>
       </Styles>
     )
@@ -185,6 +191,26 @@ class Game extends Component {
     }
     return elements
   }
+}
+
+function randomNum(min, max) {
+  const rand = Math.random()
+  const randomNum = min + Math.floor(rand * (max - min + 1))
+  return randomNum
+}
+
+const duration = 2500
+let confettiStyles = ''
+for (let i = 1; i <= 13; i++) {
+  confettiStyles += `
+    &:nth-child(${i}) {
+      left: ${i * 7}%;
+      transform: rotate(${randomNum(-80, 80)}deg);
+      animation: makeItRain ${duration}ms infinite ease-out;
+      animation-delay: ${randomNum(0, duration * 0.5)}ms;
+      animation-duration: ${randomNum(duration * 0.7, duration * 1.2)}ms
+    }
+  `
 }
 
 const Styles = styled.div`
@@ -222,8 +248,10 @@ const Styles = styled.div`
     max-width: 600px;
   }
 
+  .players-container,
   .round-container {
     flex-grow: 1;
+    flex-basis: 0;
   }
 
   .shiny-button {
@@ -313,9 +341,13 @@ const Styles = styled.div`
   }
 
   .confetti {
-    position: absolute;
+    position: fixed;
     width: 100%;
-    height: 400px;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
   }
 
   .confetti-piece {
@@ -325,121 +357,29 @@ const Styles = styled.div`
     background: #ffd300;
     top: 0;
     opacity: 0;
-  }
 
-  .confetti-piece:nth-child(1) {
-    left: 1 * 7%;
-    transform: rotate((-80 + floor(random() * (161))) deg);
-    animation: makeItRain 2500 * 1ms infinite ease-out;
-    animation-delay: (0 + floor(random() * (1251))) ms;
-    animation-duration: (2500 * 0.7 + floor(random() * (2500 * 0.5))) ms;
-  }
-  .confetti-piece:nth-child(2) {
-    left: 2 * 7%;
-    transform: rotate((-80 + floor(random() * (161))) deg);
-    animation: makeItRain 2500 * 1ms infinite ease-out;
-    animation-delay: (0 + floor(random() * (1251))) ms;
-    animation-duration: (2500 * 0.7 + floor(random() * (2500 * 0.5))) ms;
-  }
-  .confetti-piece:nth-child(3) {
-    left: 3 * 7%;
-    transform: rotate((-80 + floor(random() * (161))) deg);
-    animation: makeItRain 2500 * 1ms infinite ease-out;
-    animation-delay: (0 + floor(random() * (1251))) ms;
-    animation-duration: (2500 * 0.7 + floor(random() * (2500 * 0.5))) ms;
-  }
-  .confetti-piece:nth-child(4) {
-    left: 4 * 7%;
-    transform: rotate((-80 + floor(random() * (161))) deg);
-    animation: makeItRain 2500 * 1ms infinite ease-out;
-    animation-delay: (0 + floor(random() * (1251))) ms;
-    animation-duration: (2500 * 0.7 + floor(random() * (2500 * 0.5))) ms;
-  }
-  .confetti-piece:nth-child(5) {
-    left: 5 * 7%;
-    transform: rotate((-80 + floor(random() * (161))) deg);
-    animation: makeItRain 2500 * 1ms infinite ease-out;
-    animation-delay: (0 + floor(random() * (1251))) ms;
-    animation-duration: (2500 * 0.7 + floor(random() * (2500 * 0.5))) ms;
-  }
-  .confetti-piece:nth-child(6) {
-    left: 6 * 7%;
-    transform: rotate((-80 + floor(random() * (161))) deg);
-    animation: makeItRain 2500 * 1ms infinite ease-out;
-    animation-delay: (0 + floor(random() * (1251))) ms;
-    animation-duration: (2500 * 0.7 + floor(random() * (2500 * 0.5))) ms;
-  }
-  .confetti-piece:nth-child(7) {
-    left: 7 * 7%;
-    transform: rotate((-80 + floor(random() * (161))) deg);
-    animation: makeItRain 2500 * 1ms infinite ease-out;
-    animation-delay: (0 + floor(random() * (1251))) ms;
-    animation-duration: (2500 * 0.7 + floor(random() * (2500 * 0.5))) ms;
-  }
-  .confetti-piece:nth-child(8) {
-    left: 8 * 7%;
-    transform: rotate((-80 + floor(random() * (161))) deg);
-    animation: makeItRain 2500 * 1ms infinite ease-out;
-    animation-delay: (0 + floor(random() * (1251))) ms;
-    animation-duration: (2500 * 0.7 + floor(random() * (2500 * 0.5))) ms;
-  }
-  .confetti-piece:nth-child(9) {
-    left: 9 * 7%;
-    transform: rotate((-80 + floor(random() * (161))) deg);
-    animation: makeItRain 2500 * 1ms infinite ease-out;
-    animation-delay: (0 + floor(random() * (1251))) ms;
-    animation-duration: (2500 * 0.7 + floor(random() * (2500 * 0.5))) ms;
-  }
-  .confetti-piece:nth-child(10) {
-    left: 10 * 7%;
-    transform: rotate((-80 + floor(random() * (161))) deg);
-    animation: makeItRain 2500 * 1ms infinite ease-out;
-    animation-delay: (0 + floor(random() * (1251))) ms;
-    animation-duration: (2500 * 0.7 + floor(random() * (2500 * 0.5))) ms;
-  }
-  .confetti-piece:nth-child(11) {
-    left: 11 * 7%;
-    transform: rotate((-80 + floor(random() * (161))) deg);
-    animation: makeItRain 2500 * 1ms infinite ease-out;
-    animation-delay: (0 + floor(random() * (1251))) ms;
-    animation-duration: (2500 * 0.7 + floor(random() * (2500 * 0.5))) ms;
-  }
-  .confetti-piece:nth-child(12) {
-    left: 12 * 7%;
-    transform: rotate((-80 + floor(random() * (161))) deg);
-    animation: makeItRain 2500 * 1ms infinite ease-out;
-    animation-delay: (0 + floor(random() * (1251))) ms;
-    animation-duration: (2500 * 0.7 + floor(random() * (2500 * 0.5))) ms;
-  }
-  .confetti-piece:nth-child(13) {
-    left: 13 * 7%;
-    transform: rotate((-80 + floor(random() * (161))) deg);
-    animation: makeItRain 2500 * 1ms infinite ease-out;
-    animation-delay: (0 + floor(random() * (1251))) ms;
-    animation-duration: (2500 * 0.7 + floor(random() * (2500 * 0.5))) ms;
-  }
-  .confetti-piece:nth-child(odd) {
-    background: #17d3ff;
-  }
-  .confetti-piece:nth-child(even) {
-    z-index: 1;
-  }
+    ${confettiStyles}
 
-  .confetti-piece:nth-child(4n) {
-    width: 5px;
-    height: 12px;
-    animation-duration: 2500 * 2ms;
-  }
+    &:nth-child(odd) {
+      background: #17d3ff;
+    }
 
-  .confetti-piece:nth-child(3n) {
-    width: 3px;
-    height: 10px;
-    animation-duration: 2500 * 2.5ms;
-    animation-delay: 2500 * 1ms;
-  }
+    &:nth-child(4n) {
+      width: 5px;
+      height: 12px;
+      animation-duration: $duration * 2ms;
+    }
 
-  .confetti-piece:nth-child(4n-7) {
-    background: #ff4e91;
+    &:nth-child(3n) {
+      width: 3px;
+      height: 10px;
+      animation-duration: $duration * 2.5ms;
+      animation-delay: $duration * 1ms;
+    }
+
+    &:nth-child(4n-7) {
+      background: #ff4e91;
+    }
   }
 
   @keyframes makeItRain {
@@ -452,7 +392,7 @@ const Styles = styled.div`
     }
 
     to {
-      transform: translateY(400px);
+      transform: translateY(500px);
     }
   }
 `
