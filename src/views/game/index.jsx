@@ -45,8 +45,8 @@ class Game extends Component {
         submissions.forEach(sub => {
           const { playerId } = sub
           if (playerId in scores) {
-            old_score = scores[playerId][0]
-            old_image = scores[playerId][1]
+            const old_score = scores[playerId][0]
+            const old_image = scores[playerId][1]
 
             scores[playerId] = [sub.score + old_score, sub.image]
           } else {
