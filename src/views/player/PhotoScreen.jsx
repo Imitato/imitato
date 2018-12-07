@@ -13,6 +13,7 @@ const USER_MEDIA_CONSTRAINTS = {
 export default class PhotoScreen extends React.Component {
   state = {
     streaming: false,
+    captureEnabled: false,
     photoTaken: false,
     message: 'Waiting for players to join...',
   }
@@ -24,7 +25,7 @@ export default class PhotoScreen extends React.Component {
     const query = { role: 'player', gameId, playerId }
     this.socket = io({ query })
     this.socket.on('round start', () => {
-      this.setState({ message: 'Take a picture!' })
+      this.setState({ message: 'Take a picture!', captureEnabled: true })
     })
 
     this.video = React.createRef()
@@ -52,7 +53,9 @@ export default class PhotoScreen extends React.Component {
           <video ref={this.video} className="photo" autoPlay playsInline>
             Video stream not available.
           </video>
-          <button id="photo-button" onClick={this.takePhoto} />
+          {this.state.captureEnabled && (
+            <button id="photo-button" onClick={this.takePhoto} />
+          )}
         </div>
         <div className={this.state.photoTaken ? undefined : 'hidden'}>
           <canvas ref={this.canvas} className="photo" />
@@ -83,19 +86,22 @@ export default class PhotoScreen extends React.Component {
   }
 
   submitPhoto = () => {
+    const { gameId, playerId } = this.props
     const canvas = this.canvas.current
     canvas.toBlob(blob => {
       const data = new FormData()
       data.append('image', blob)
-      axios.post('/imitato/game/round/submit', data, {
-        headers: {
-          'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
-        },
-        params: {
-          gameId: this.props.gameId,
-          playerId: this.props.playerId,
-        },
-      })
+      axios
+        .post('/imitato/game/round/submit', data, {
+          headers: {
+            'Content-Type': `multipart/form-data; boundary=${data._boundary}`,
+          },
+          params: { gameId, playerId },
+        })
+        .then(response => {
+          this.setState({ photoTaken: false })
+        })
+        .catch(error => console.log(error))
     }, 'image/jpeg')
   }
 }
