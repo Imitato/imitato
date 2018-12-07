@@ -18,11 +18,11 @@ class Game extends Component {
   }
 
   widthMap = {
-    0: "324px",
-    1: "324px",
-    2: "324px",
-    3: "324px",
-    4: "324px"
+    0: '324px',
+    1: '324px',
+    2: '324px',
+    3: '324px',
+    4: '324px',
     // 1: "150px",
     // 2: "150px",
     // 3: "150px",
@@ -86,9 +86,9 @@ class Game extends Component {
     const keys = Object.keys(scores)
     const tups = keys.map(k => [k, scores[k][0], scores[k][1], 2])
     for (var i = 0; i < tups.length; ++i) {
-      var tup = tups[i];
-      tup.push(i);
-      tups[i] = tup;
+      var tup = tups[i]
+      tup.push(i)
+      tups[i] = tup
     }
     tups.sort((a, b) => b[1] - a[1])
     return tups
@@ -146,29 +146,33 @@ class Game extends Component {
                 <>
                   <div>Rankings!</div>
                   <div className="confetti">
-                    <div className="confetti-piece"></div>
-                    <div className="confetti-piece"></div>
-                    <div className="confetti-piece"></div>
-                    <div className="confetti-piece"></div>
-                    <div className="confetti-piece"></div>
-                    <div className="confetti-piece"></div>
-                    <div className="confetti-piece"></div>
-                    <div className="confetti-piece"></div>
-                    <div className="confetti-piece"></div>
-                    <div className="confetti-piece"></div>
-                    <div className="confetti-piece"></div>
-                    <div className="confetti-piece"></div>
-                    <div className="confetti-piece"></div>
+                    {(() => {
+                      const confettiElems = []
+                      for (let i = 0; i < 13; i++) {
+                        confettiElems.push(<div className="confetti-piece" />)
+                      }
+                      return confettiElems
+                    })()}
                     <div id="ranking-slide">
-                    <ol>
-                  {this.rankedPlayers(this.state.playerScores).map(p => (
-                    <div>
-                      <li><a href=""><img src={`/images?id=` + p[2].filename} className="small-rank" width={this.widthMap[p[4]]} height={this.widthMap[p[4]]} align="center"/> </a></li>
+                      <ol>
+                        {this.rankedPlayers(this.state.playerScores).map(p => (
+                          <div>
+                            <li>
+                              <a href="">
+                                <img
+                                  src={`/images?id=` + p[2].filename}
+                                  className="small-rank"
+                                  width={this.widthMap[p[4]]}
+                                  height={this.widthMap[p[4]]}
+                                  align="center"
+                                />{' '}
+                              </a>
+                            </li>
+                          </div>
+                        ))}
+                      </ol>
                     </div>
-                  ))}
-                    </ol>
                   </div>
-                </div>
                 </>
               )}
             </div>
@@ -338,114 +342,114 @@ const Styles = styled.div`
 
   .confetti-piece:nth-child(1) {
     left: 1 * 7%;
-    transform: rotate((-80+floor(random()*(161)))deg);
+    transform: rotate((-80 + floor(random() * (161))) deg);
     animation: makeItRain 2500 * 1ms infinite ease-out;
-    animation-delay: (0+floor(random()*(1251)))ms;
-    animation-duration: (2500*.7+floor(random()*(2500*.5)))ms;
+    animation-delay: (0 + floor(random() * (1251))) ms;
+    animation-duration: (2500 * 0.7 + floor(random() * (2500 * 0.5))) ms;
   }
   .confetti-piece:nth-child(2) {
     left: 2 * 7%;
-    transform: rotate((-80+floor(random()*(161)))deg);
+    transform: rotate((-80 + floor(random() * (161))) deg);
     animation: makeItRain 2500 * 1ms infinite ease-out;
-    animation-delay: (0+floor(random()*(1251)))ms;
-    animation-duration: (2500*.7+floor(random()*(2500*.5)))ms;
+    animation-delay: (0 + floor(random() * (1251))) ms;
+    animation-duration: (2500 * 0.7 + floor(random() * (2500 * 0.5))) ms;
   }
   .confetti-piece:nth-child(3) {
     left: 3 * 7%;
-    transform: rotate((-80+floor(random()*(161)))deg);
+    transform: rotate((-80 + floor(random() * (161))) deg);
     animation: makeItRain 2500 * 1ms infinite ease-out;
-    animation-delay: (0+floor(random()*(1251)))ms;
-    animation-duration: (2500*.7+floor(random()*(2500*.5)))ms;
+    animation-delay: (0 + floor(random() * (1251))) ms;
+    animation-duration: (2500 * 0.7 + floor(random() * (2500 * 0.5))) ms;
   }
   .confetti-piece:nth-child(4) {
     left: 4 * 7%;
-    transform: rotate((-80+floor(random()*(161)))deg);
+    transform: rotate((-80 + floor(random() * (161))) deg);
     animation: makeItRain 2500 * 1ms infinite ease-out;
-    animation-delay: (0+floor(random()*(1251)))ms;
-    animation-duration: (2500*.7+floor(random()*(2500*.5)))ms;
+    animation-delay: (0 + floor(random() * (1251))) ms;
+    animation-duration: (2500 * 0.7 + floor(random() * (2500 * 0.5))) ms;
   }
   .confetti-piece:nth-child(5) {
     left: 5 * 7%;
-    transform: rotate((-80+floor(random()*(161)))deg);
+    transform: rotate((-80 + floor(random() * (161))) deg);
     animation: makeItRain 2500 * 1ms infinite ease-out;
-    animation-delay: (0+floor(random()*(1251)))ms;
-    animation-duration: (2500*.7+floor(random()*(2500*.5)))ms;
+    animation-delay: (0 + floor(random() * (1251))) ms;
+    animation-duration: (2500 * 0.7 + floor(random() * (2500 * 0.5))) ms;
   }
   .confetti-piece:nth-child(6) {
     left: 6 * 7%;
-    transform: rotate((-80+floor(random()*(161)))deg);
+    transform: rotate((-80 + floor(random() * (161))) deg);
     animation: makeItRain 2500 * 1ms infinite ease-out;
-    animation-delay: (0+floor(random()*(1251)))ms;
-    animation-duration: (2500*.7+floor(random()*(2500*.5)))ms;
+    animation-delay: (0 + floor(random() * (1251))) ms;
+    animation-duration: (2500 * 0.7 + floor(random() * (2500 * 0.5))) ms;
   }
   .confetti-piece:nth-child(7) {
     left: 7 * 7%;
-    transform: rotate((-80+floor(random()*(161)))deg);
+    transform: rotate((-80 + floor(random() * (161))) deg);
     animation: makeItRain 2500 * 1ms infinite ease-out;
-    animation-delay: (0+floor(random()*(1251)))ms;
-    animation-duration: (2500*.7+floor(random()*(2500*.5)))ms;
+    animation-delay: (0 + floor(random() * (1251))) ms;
+    animation-duration: (2500 * 0.7 + floor(random() * (2500 * 0.5))) ms;
   }
   .confetti-piece:nth-child(8) {
     left: 8 * 7%;
-    transform: rotate((-80+floor(random()*(161)))deg);
+    transform: rotate((-80 + floor(random() * (161))) deg);
     animation: makeItRain 2500 * 1ms infinite ease-out;
-    animation-delay: (0+floor(random()*(1251)))ms;
-    animation-duration: (2500*.7+floor(random()*(2500*.5)))ms;
+    animation-delay: (0 + floor(random() * (1251))) ms;
+    animation-duration: (2500 * 0.7 + floor(random() * (2500 * 0.5))) ms;
   }
   .confetti-piece:nth-child(9) {
     left: 9 * 7%;
-    transform: rotate((-80+floor(random()*(161)))deg);
+    transform: rotate((-80 + floor(random() * (161))) deg);
     animation: makeItRain 2500 * 1ms infinite ease-out;
-    animation-delay: (0+floor(random()*(1251)))ms;
-    animation-duration: (2500*.7+floor(random()*(2500*.5)))ms;
+    animation-delay: (0 + floor(random() * (1251))) ms;
+    animation-duration: (2500 * 0.7 + floor(random() * (2500 * 0.5))) ms;
   }
   .confetti-piece:nth-child(10) {
     left: 10 * 7%;
-    transform: rotate((-80+floor(random()*(161)))deg);
+    transform: rotate((-80 + floor(random() * (161))) deg);
     animation: makeItRain 2500 * 1ms infinite ease-out;
-    animation-delay: (0+floor(random()*(1251)))ms;
-    animation-duration: (2500*.7+floor(random()*(2500*.5)))ms;
+    animation-delay: (0 + floor(random() * (1251))) ms;
+    animation-duration: (2500 * 0.7 + floor(random() * (2500 * 0.5))) ms;
   }
   .confetti-piece:nth-child(11) {
     left: 11 * 7%;
-    transform: rotate((-80+floor(random()*(161)))deg);
+    transform: rotate((-80 + floor(random() * (161))) deg);
     animation: makeItRain 2500 * 1ms infinite ease-out;
-    animation-delay: (0+floor(random()*(1251)))ms;
-    animation-duration: (2500*.7+floor(random()*(2500*.5)))ms;
+    animation-delay: (0 + floor(random() * (1251))) ms;
+    animation-duration: (2500 * 0.7 + floor(random() * (2500 * 0.5))) ms;
   }
   .confetti-piece:nth-child(12) {
     left: 12 * 7%;
-    transform: rotate((-80+floor(random()*(161)))deg);
+    transform: rotate((-80 + floor(random() * (161))) deg);
     animation: makeItRain 2500 * 1ms infinite ease-out;
-    animation-delay: (0+floor(random()*(1251)))ms;
-    animation-duration: (2500*.7+floor(random()*(2500*.5)))ms;
+    animation-delay: (0 + floor(random() * (1251))) ms;
+    animation-duration: (2500 * 0.7 + floor(random() * (2500 * 0.5))) ms;
   }
   .confetti-piece:nth-child(13) {
     left: 13 * 7%;
-    transform: rotate((-80+floor(random()*(161)))deg);
+    transform: rotate((-80 + floor(random() * (161))) deg);
     animation: makeItRain 2500 * 1ms infinite ease-out;
-    animation-delay: (0+floor(random()*(1251)))ms;
-    animation-duration: (2500*.7+floor(random()*(2500*.5)))ms;
+    animation-delay: (0 + floor(random() * (1251))) ms;
+    animation-duration: (2500 * 0.7 + floor(random() * (2500 * 0.5))) ms;
   }
   .confetti-piece:nth-child(odd) {
-      background: #17d3ff;
+    background: #17d3ff;
   }
   .confetti-piece:nth-child(even) {
-      z-index: 1;
+    z-index: 1;
   }
 
   .confetti-piece:nth-child(4n) {
-      width: 5px;
-      height: 12px;
-      animation-duration: 2500 * 2ms;
-    }
+    width: 5px;
+    height: 12px;
+    animation-duration: 2500 * 2ms;
+  }
 
   .confetti-piece:nth-child(3n) {
-      width: 3px;
-      height: 10px;
-      animation-duration: 2500 * 2.5ms;
-      animation-delay: 2500 * 1ms;
-    }
+    width: 3px;
+    height: 10px;
+    animation-duration: 2500 * 2.5ms;
+    animation-delay: 2500 * 1ms;
+  }
 
   .confetti-piece:nth-child(4n-7) {
     background: #ff4e91;
@@ -465,7 +469,7 @@ const Styles = styled.div`
     }
   }
 
-  body{
+  body {
     background: #ccc;
   }
 
@@ -504,10 +508,10 @@ const Styles = styled.div`
   }
 
   #ranking-slide li > a:hover {
-    background: #FBBD06;
+    background: #fbbd06;
   }
 
-  #ranking-slide li:nth-child(n+2):nth-child(-n+3) {
+  #ranking-slide li:nth-child(n + 2):nth-child(-n + 3) {
     top: -172px;
   }
 
@@ -521,7 +525,7 @@ const Styles = styled.div`
     height: 335px;
   }
 
-  #ranking-slide  {
+  #ranking-slide {
     counter-reset: number;
   }
 
@@ -540,34 +544,27 @@ const Styles = styled.div`
     height: 22px;
     line-height: 22px;
     color: #fff;
-    background: #EA4436;
+    background: #ea4436;
     font-size: 1.2rem;
     text-align: center;
     z-index: 1;
   }
 
-  #ranking-slide  li:first-child:before {
+  #ranking-slide li:first-child:before {
     width: 25px;
     height: 25px;
     line-height: 25px;
     font-size: 1.5rem;
   }
   #big-rank {
-    width:324px;
-    height:324px;
+    width: 324px;
+    height: 324px;
     text-align: center;
-    margin:6px 6px
+    margin: 6px 6px;
   }
-  #small-rank {
-    /* width:150px;
-    height:150px;
-    text-align: center;
-    margin:6px 6px; */
-    max-width:100%;
-    max-height:100%;
-    height: auto;
-    width:auto;
+  .small-rank {
+    object-fit: cover;
   }
-  `
+`
 
 ReactDOM.render(<Game />, document.getElementById('root'))
