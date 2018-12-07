@@ -49,7 +49,11 @@ export default class PhotoScreen extends React.Component {
       <Styles>
         {!this.state.streaming && <LoadingView />}
         {this.state.message && <div id="message">{this.state.message}</div>}
-        <div className={this.state.photoTaken ? 'hidden' : undefined}>
+        <div
+          className={`photo-container ${
+            this.state.photoTaken ? 'hidden' : undefined
+          }`}
+        >
           <video ref={this.video} className="photo" autoPlay playsInline>
             Video stream not available.
           </video>
@@ -57,7 +61,11 @@ export default class PhotoScreen extends React.Component {
             <button id="photo-button" onClick={this.takePhoto} />
           )}
         </div>
-        <div className={this.state.photoTaken ? undefined : 'hidden'}>
+        <div
+          className={`photo-container ${
+            this.state.photoTaken ? undefined : 'hidden'
+          }`}
+        >
           <canvas ref={this.canvas} className="photo" />
           <button id="retake-button" onClick={this.retakePhoto} />
           <button id="submit-button" onClick={this.submitPhoto} />
@@ -108,28 +116,31 @@ export default class PhotoScreen extends React.Component {
 
 const Styles = styled.div`
   position: absolute;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  border: none;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 
   #message {
-    background-color: white;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1;
     padding: 0.5em;
+    background-color: #3f51b5;
+    color: white;
+    font-weight: 600;
     text-align: center;
   }
 
+  .photo-container {
+    position: relative;
+    flex-grow: 1;
+  }
+
   .photo {
-    object-fit: cover;
+    position: absolute;
     width: calc(100vw + 1px);
-    height: 100vh;
+    height: 100%;
     border: none;
     transform: scale(-1, 1);
+    object-fit: cover;
   }
 
   .hidden {
