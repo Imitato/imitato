@@ -13,6 +13,8 @@ class Game extends Component {
     players: [],
   }
 
+  
+
   createRound = () => {
     const { gameId } = this.state
     const query = { params: { gameId } }
@@ -121,10 +123,13 @@ class Game extends Component {
               ) : (
                 <>
                   <div>Rankings!</div>
+                  <br/>
+                  <div>{this.renderEmotionsList()}</div>
                   <div id="ranking-slide">
                     {this.rankedPlayers(this.state.playerScores).map((p, i) => {
                       const dim = `${Math.round(324 * Math.pow(0.9, i))}px`
                       return (
+                        <div>{p[0]}'S SCORE: {Number((p[1]).toFixed(4))}
                         <div
                           className="ranking-image"
                           style={{ width: dim, height: dim }}
@@ -132,7 +137,7 @@ class Game extends Component {
                         >
                           <img src={`/images?id=` + p[2].filename} />
                           <div className="ranking-number">{i + 1}</div>
-                        </div>
+                        </div></div>
                       )
                     })}
                   </div>
@@ -279,6 +284,7 @@ const Styles = styled.div`
     width: 100%;
     height: 100%;
     object-fit: cover;
+    margin: 6px 0px;
   }
 
   .ranking-number {
