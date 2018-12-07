@@ -348,6 +348,7 @@ const Styles = styled.div`
     left: 0;
     right: 0;
     bottom: 0;
+    pointer-events: none;
   }
 
   .confetti-piece {
@@ -367,14 +368,14 @@ const Styles = styled.div`
     &:nth-child(4n) {
       width: 5px;
       height: 12px;
-      animation-duration: $duration * 2ms;
+      animation-duration: ${duration * 2}ms;
     }
 
     &:nth-child(3n) {
       width: 3px;
       height: 10px;
-      animation-duration: $duration * 2.5ms;
-      animation-delay: $duration * 1ms;
+      animation-duration: ${duration * 2.5}ms;
+      animation-delay: ${duration}ms;
     }
 
     &:nth-child(4n-7) {
