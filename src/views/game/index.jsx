@@ -49,6 +49,7 @@ class Game extends Component {
           .get('/imitato/game/start_round', query)
           .then(response => {
             this.setState({ roundStarted: true })
+            this.socket.emit('start round')
           })
           .catch(error => console.error(error))
       })
