@@ -13,8 +13,6 @@ class Game extends Component {
     players: [],
   }
 
-  
-
   createRound = () => {
     const { gameId } = this.state
     const query = { params: { gameId } }
@@ -104,14 +102,14 @@ class Game extends Component {
           </button>
         )}
         <div className="game-data">
-          <div>
+          <div className="players-container">
             <h3>Players</h3>
             <div>{this.renderPlayersList()}</div>
           </div>
           {this.state.rounds.length === 0 ? (
             <div>Waiting for round to start.</div>
           ) : (
-            <div>
+            <div className="round-container">
               <h3>Round {this.state.rounds.length}</h3>
               {this.state.roundStarted ? (
                 <>
@@ -122,22 +120,23 @@ class Game extends Component {
                 </>
               ) : (
                 <>
-                  <div>Rankings!</div>
-                  <br/>
-                  <div>{this.renderEmotionsList()}</div>
-                  <div id="ranking-slide">
+                  <div style={{ paddingBottom: '0.8em' }}>Rankings!</div>
+                  <div className="ranking-images">
                     {this.rankedPlayers(this.state.playerScores).map((p, i) => {
+                      const player = p[0]
+                      const score = Number(p[1].toFixed(4))
                       const dim = `${Math.round(324 * Math.pow(0.9, i))}px`
                       return (
-                        <div>{p[0]}'S SCORE: {Number((p[1]).toFixed(4))}
-                        <div
-                          className="ranking-image"
-                          style={{ width: dim, height: dim }}
-                          key={i}
-                        >
-                          <img src={`/images?id=` + p[2].filename} />
+                        <div className="ranking-image" key={i}>
+                          <img
+                            style={{ width: dim, height: dim }}
+                            src={`/images?id=` + p[2].filename}
+                          />
+                          <div>
+                            {player}'S SCORE: {score}
+                          </div>
                           <div className="ranking-number">{i + 1}</div>
-                        </div></div>
+                        </div>
                       )
                     })}
                   </div>
@@ -162,34 +161,33 @@ class Game extends Component {
   }
 
   renderPlayersList() {
-    const playerElems = []
+    const elements = []
     for (const [playerId, player] of Object.entries(this.state.players)) {
       if (player.connected) {
-        playerElems.push(<div key={playerId}>{playerId}</div>)
+        elements.push(<div key={playerId}>{playerId}</div>)
       }
     }
-    return playerElems
+    return elements
   }
 
   renderEmotionsList() {
     const { rounds } = this.state
     const { emotions_map } = rounds[rounds.length - 1]
-    const emotionElems = []
+    const elements = []
     for (const [emotion, value] of Object.entries(emotions_map)) {
       if (value > 0) {
-        emotionElems.push(
+        elements.push(
           <span className="emotion" key={emotion}>
             {emotion}
           </span>
         )
       }
     }
-    return emotionElems
+    return elements
   }
 }
 
 const Styles = styled.div`
-  max-width: 500px;
   margin: auto;
   text-align: center;
 
@@ -209,6 +207,7 @@ const Styles = styled.div`
 
   .description {
     margin: 0 auto;
+    max-width: 500px;
   }
 
   .game-code {
@@ -217,12 +216,14 @@ const Styles = styled.div`
 
   .game-data {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     margin: 1em auto;
-    > div {
-      flex-grow: 1;
-      flex-basis: 0;
-    }
+    max-width: 600px;
+  }
+
+  .round-container {
+    flex-grow: 1;
   }
 
   .shiny-button {
@@ -261,30 +262,37 @@ const Styles = styled.div`
     font-size: 20px;
   }
 
-  body {
-    background: #ccc;
+  .ranking-images {
+    margin: 0 auto;
+    width: fit-content;
   }
 
   .ranking-image {
     position: relative;
     display: block;
-    width: 324px;
-    height: 324px;
     background: #efefef;
     border-radius: 5px;
-    padding: 0 5px 10px;
+    padding: 0 5px 5px;
     margin-bottom: 10px;
+    width: fit-content;
     cursor: pointer;
     &:hover {
       background: #fbbd06;
     }
   }
 
+  .winner {
+    width: 324px;
+    height: 324px;
+  }
+
+  .runnerup {
+    width: 152px;
+    height: 152px;
+  }
+
   .ranking-image img {
-    width: 100%;
-    height: 100%;
     object-fit: cover;
-    margin: 6px 0px;
   }
 
   .ranking-number {
