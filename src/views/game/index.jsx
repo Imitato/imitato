@@ -130,6 +130,31 @@ class Game extends Component {
                   {this.rankedPlayers(this.state.playerScores).map(p => (
                     <div>
                       {p[0]} {p[1]} <img src={`/images?id={p[2].filename}`} />
+                      <div class="confetti">
+                        <div class="confetti-piece"></div>
+                        <div class="confetti-piece"></div>
+                        <div class="confetti-piece"></div>
+                        <div class="confetti-piece"></div>
+                        <div class="confetti-piece"></div>
+                        <div class="confetti-piece"></div>
+                        <div class="confetti-piece"></div>
+                        <div class="confetti-piece"></div>
+                        <div class="confetti-piece"></div>
+                        <div class="confetti-piece"></div>
+                        <div class="confetti-piece"></div>
+                        <div class="confetti-piece"></div>
+                        <div class="confetti-piece"></div>
+
+                        <div id="ranking-slide">
+                          <ol>
+                            <li><a href=""><img src="https://i.ytimg.com/vi/ilXuh_-68N8/maxresdefault.jpg" width="324px" height="324px" align="middle" style="margin:6px 6px"/></a></li><li>
+                            <a href=""><img src="https://multifiles.pressherald.com/uploads/sites/2/2014/07/310825_167737-Climber3.jpg" width="150px" height="150px" align="middle" style="margin:6px 6px"/></a></li><li>
+                            <a href=""><img src="https://docplayer.net/docs-images/56/39347667/images/39-0.png" width="150px" height="150px" align="middle" style="margin:6px 6px"/></a></li><li>
+                            <a href=""><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWD8bozdI2f9hKrFwJPL2KEwmGvP-yNXwDmYhEC8byXkEMMp_I" width="150px" height="150px" align="middle" style="margin:6px 6px"/></a></li><li>
+                            <a href=""><img src="https://s-media-cache-ak0.pinimg.com/236x/27/bc/62/27bc620d34592e5d694b0327f173a87f--navy-dress-the-dress.jpg" width="150px" height="150px" align="middle" style="margin:6px 6px"/></a></li>
+                          </ol>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </>
@@ -284,6 +309,170 @@ const Styles = styled.div`
       left: 82%;
     }
   }
-`
+
+  $yellow: #ffd300;
+  $blue: #17d3ff;
+  $pink: #ff4e91;
+
+  $duration: 2500;
+
+  @function randomNum($min, $max) {
+    $rand: random();
+    $randomNum: $min + floor($rand * (($max - $min) + 1));
+
+    @return $randomNum;
+  }
+
+  .confetti {
+    width: 100%;
+    height: 400px;
+  }
+
+  .confetti-piece {
+    position: absolute;
+    width: 8px;
+    height: 16px;
+    background: $yellow;
+    top: 0;
+    opacity: 0;
+
+    @for $i from 1 through 13 {
+      &:nth-child(#{$i}) {
+        left: $i * 7%;
+        transform: rotate(#{randomNum(-80, 80)}deg);
+        animation: makeItRain $duration * 1ms infinite ease-out;
+        animation-delay: #{randomNum(0, $duration * .5)}ms;
+        animation-duration: #{randomNum($duration * .7, $duration * 1.2)}ms
+      }
+    }
+
+    &:nth-child(odd) {
+      background: $blue;
+    }
+
+    &:nth-child(even) {
+      z-index: 1;
+    }
+
+    &:nth-child(4n) {
+      width: 5px;
+      height: 12px;
+      animation-duration: $duration * 2ms;
+    }
+
+    &:nth-child(3n) {
+      width: 3px;
+      height: 10px;
+      animation-duration: $duration * 2.5ms;
+      animation-delay: $duration * 1ms;
+    }
+
+    &:nth-child(4n-7) {
+      background: $pink;
+    }
+  }
+
+  @keyframes makeItRain {
+    from {
+      opacity: 0;
+    }
+
+    50% {
+      opacity: 1;
+    }
+
+    to {
+      transform: translateY(400px);
+    }
+  }
+
+  body{
+    background: #ccc;
+  }
+
+  #ranking-slide {
+    position: relative;
+    width: 692px;
+    height: 338px;
+    margin: 30px auto;
+  }
+
+  #ranking-slide > :not(a) {
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  #ranking-slide > a {
+    cursor: pointer;
+  }
+
+  #ranking-slide li {
+    display: inline-block;
+    margin: 0 16px 0 0;
+  }
+
+  #ranking-slide li,
+  #ranking-slide li > a {
+    width: 162px;
+    height: 162px;
+  }
+
+  #ranking-slide li > a {
+    cursor: pointer;
+    display: block;
+    background: #efefef;
+    border-radius: 5px;
+  }
+
+  #ranking-slide li > a:hover {
+    background: #FBBD06;
+  }
+
+  #ranking-slide li:nth-child(n+2):nth-child(-n+3) {
+    top: -172px;
+  }
+
+  #ranking-slide li:nth-child(4) {
+    margin: 175px 16px 0 -356px;
+  }
+
+  #ranking-slide li:first-child,
+  #ranking-slide li:first-child > a {
+    width: 336px;
+    height: 335px;
+  }
+
+  #ranking-slide  {
+    counter-reset: number;
+  }
+
+  #ranking-slide li {
+    position: relative;
+  }
+
+  #ranking-slide li:before {
+    content: counter(number);
+    counter-increment: number;
+    position: absolute;
+    top: 7px;
+    left: 7px;
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    line-height: 22px;
+    color: #fff;
+    background: #EA4436;
+    font-size: 1.2rem;
+    text-align: center;
+    z-index: 1;
+  }
+
+  #ranking-slide  li:first-child:before {
+    width: 25px;
+    height: 25px;
+    line-height: 25px;
+    font-size: 1.5rem;
+  }
+  `
 
 ReactDOM.render(<Game />, document.getElementById('root'))
