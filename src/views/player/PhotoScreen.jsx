@@ -107,7 +107,11 @@ export default class PhotoScreen extends React.Component {
           params: { gameId, playerId },
         })
         .then(response => {
-          this.setState({ photoTaken: false })
+          this.setState({
+            photoTaken: false,
+            captureEnabled: false,
+            message: 'Waiting for the next round...',
+          })
         })
         .catch(error => console.log(error))
     }, 'image/jpeg')
