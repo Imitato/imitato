@@ -13,10 +13,6 @@ class Game extends Component {
     players: [],
   }
 
-  pictures = {
-    Alan: '',
-  }
-
   widthMap = {
     0: '324px',
     1: '324px',
@@ -27,14 +23,6 @@ class Game extends Component {
     // 2: "150px",
     // 3: "150px",
     // 4: "150px"
-  }
-
-  getPicture = key => {
-    if (key in this.pictures) {
-      return this.pictures[key]
-    } else {
-      return ''
-    }
   }
 
   createRound = () => {
