@@ -1,4 +1,6 @@
 const path = require('path')
+const fs = require('fs')
+const https = require('https')
 
 const { Server } = require('http')
 const express = require('express')
@@ -12,6 +14,12 @@ var ENV = {
   dbPass: process.env.DB_PASSWORD,
 }
 
+const DEV = true 
+var certOptions = {
+  key: fs.readFileSync(path.resolve('./server.key')),
+  cert: fs.readFileSync(path.resolve('./server.crt'))
+}
+
 // local
 // const dbUrl = 'mongodb://localhost:27017'
 // mLab
@@ -19,7 +27,10 @@ const dbUrl = `mongodb://${ENV['dbUser']}:${ENV['dbPass']}@ds157740.mlab.com:577
 const mongoClient = new MongoClient(dbUrl)
 
 const app = express()
-const server = Server(app)
+let server = Server(app)
+if (DEV) {
+  server = https.createServer(certOptions, app)
+}
 const io = require('./game_socket')(server)
 
 mongoClient.connect(err => {

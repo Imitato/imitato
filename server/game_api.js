@@ -69,6 +69,7 @@ module.exports = function(collection, ENV) {
       _id: generateGameID(6),
       rounds: [],
       roundInProgress: false,
+      totalRounds: 10,
     }
     collection.insertOne(game, (error, obj) => {
       if (!error) {
@@ -96,46 +97,47 @@ module.exports = function(collection, ENV) {
 
     collection.findOne({ _id: gameId }).then(game => {
       if (game.roundInProgress) {
-        res.status(400).send(`Game ${gameId} already a has a round running.`)
+        res.status(400).send(`The round for ${gameId} has already started.`)
         return
       }
-    })
+      let difficulty = Math.floor(game.rounds.length/3)+1
 
-    let rand_emotions = generateEmotions()
-      .split('')
-      .map(item => parseInt(item, 10))
-    let total = rand_emotions.reduce((acc, num) => acc + num)
-    rand_emotions = rand_emotions.map(item => item / total)
+      let rand_emotions = generateEmotionsByDifficulty(difficulty)
+        .split('')
+        .map(item => parseInt(item, 10))
+      let total = rand_emotions.reduce((acc, num) => acc + num)
+      rand_emotions = rand_emotions.map(item => item / total)
 
-    let emotions_map = {}
+      let emotions_map = {}
 
-    for (let i = 0; i < EMOTIONS.length; i++) {
-      emotions_map[EMOTIONS[i]] = rand_emotions[i]
-    }
+      for (let i = 0; i < EMOTIONS.length; i++) {
+        emotions_map[EMOTIONS[i]] = rand_emotions[i]
+      }
 
-    const round = { submissions: [], emotions_map }
-    collection
-      .findOneAndUpdate(
-        { _id: gameId },
-        {
-          $push: {
-            rounds: {
-              $each: [round],
+      const round = { submissions: [], emotions_map }
+      collection
+        .findOneAndUpdate(
+          { _id: gameId },
+          {
+            $push: {
+              rounds: {
+                $each: [round],
+              },
             },
           },
-        },
-        { returnOriginal: false }
-      )
-      .then(result => {
-        const {
-          lastErrorObject: { updatedExisting },
-          value,
-        } = result
+          { returnOriginal: false }
+        )
+        .then(result => {
+          const {
+            lastErrorObject: { updatedExisting },
+            value,
+          } = result
 
-        if (updatedExisting) res.status(200).send(value)
-        else res.status(400).send(`Game ${gameId} not found.`)
-      })
-      .catch(error => res.status(400).send(error))
+          if (updatedExisting) res.status(200).send(value)
+          else res.status(400).send(`Game ${gameId} not found.`)
+        })
+        .catch(error => res.status(400).send(error))
+    })
   })
 
   router.get('/game/start_round', (req, res) => {
@@ -230,6 +232,34 @@ function generateGameID(length) {
     id.push('A'.charCodeAt() + randomIndex)
   }
   return String.fromCharCode(...id)
+}
+
+/**
+ * @param {number} difficulty Number of simultaneous emotions.
+ * @returns Returns a bitstring of length 8, where digits correspond to
+ * emotions, and the number of simultaneous emotions depends on difficulty.
+ */
+function generateEmotionsByDifficulty(difficulty) {
+  let num_emotions = 8
+  emotions = []
+  for (let i = 0; i < num_emotions; i++) {
+    emotions.push(i)
+  }
+
+  const selected_emotions = []
+  for (let i = 0; i < difficulty; i++) {
+    let choice = Math.floor(Math.random() * emotions.length)
+    selected_emotions.push(emotions[choice])
+    emotions.splice(choice, 1)
+  }
+
+  bitstring = '00000000'
+  for (let i = 0; i < selected_emotions.length; i++) {
+    bit = selected_emotions[i]
+    bitstring = bitstring.substr(0, bit) + '1' + bitstring.substr(bit+1)
+  }
+  
+  return bitstring
 }
 
 /**
