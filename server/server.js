@@ -15,9 +15,11 @@ var ENV = {
 }
 
 const DEV = true 
-var certOptions = {
-  key: fs.readFileSync(path.resolve('./server.key')),
-  cert: fs.readFileSync(path.resolve('./server.crt'))
+if (DEV) {
+  var certOptions = {
+    key: fs.readFileSync(path.resolve('./server.key')),
+    cert: fs.readFileSync(path.resolve('./server.crt'))
+  }
 }
 
 // local
