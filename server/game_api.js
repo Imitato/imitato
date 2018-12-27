@@ -70,6 +70,7 @@ module.exports = function(collection, ENV) {
       rounds: [],
       roundInProgress: false,
       totalRounds: 10,
+      gameEnded: false,
     }
     collection.insertOne(game, (error, obj) => {
       if (!error) {
@@ -96,6 +97,10 @@ module.exports = function(collection, ENV) {
     const { gameId } = req.query
 
     collection.findOne({ _id: gameId }).then(game => {
+      if (game.gameEnded) {
+        res.status(400).send("Game is ended.")
+        return 
+      }
       if (game.roundInProgress) {
         res.status(400).send(`The round for ${gameId} has already started.`)
         return
@@ -142,14 +147,20 @@ module.exports = function(collection, ENV) {
 
   router.get('/game/start_round', (req, res) => {
     const { gameId } = req.query
-    collection
-      .findOneAndUpdate(
-        { _id: gameId },
-        { $set: { roundInProgress: true } },
-        { returnOriginal: false }
-      )
-      .then(result => res.status(200).send(result))
-      .catch(error => res.status(400).send(error))
+    collection.findOne({ _id: gameId }).then(game => {
+      if (game.gameEnded) {
+        res.status(400).send("Game is ended.")
+        return 
+      }
+      collection
+        .findOneAndUpdate(
+          { _id: gameId },
+          { $set: { roundInProgress: true } },
+          { returnOriginal: false }
+        )
+        .then(result => res.status(200).send(result))
+        .catch(error => res.status(400).send(error))
+    })
   })
 
   router.get('/game/end_round', (req, res) => {
@@ -160,7 +171,23 @@ module.exports = function(collection, ENV) {
         { $set: { roundInProgress: false } },
         { returnOriginal: false }
       )
-      .then(result => res.status(200).send(result))
+      .then(result => {
+        // If we just completed the tenth round, end the game.
+        collection.findOne({ _id: gameId })
+        .then(game => {
+          if (game.rounds.length >= 10) {
+            collection.findOneAndUpdate(
+              { _id: gameId },
+              { $set: { gameEnded: true } },
+              { returnOriginal: false }
+            )
+            .then(result => res.status(200).send(result))
+            .catch(error => res.status(400).send(error))
+          } 
+          res.status(200).send(result)
+        })
+        .catch(error => res.status(400).send(error))
+      })
       .catch(error => res.status(400).send(error))
   })
 
