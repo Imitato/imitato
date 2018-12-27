@@ -121,6 +121,7 @@ class Game extends Component {
                   </>
                 ) : (
                   <>
+                    <div>{this.renderEmotionsList()}</div>
                     <div style={{ paddingBottom: '0.8em' }}>Rankings!</div>
                     <div className="ranking-images">
                       {this.rankedPlayers(this.state.playerScores).map(
