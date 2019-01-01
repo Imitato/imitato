@@ -173,22 +173,20 @@ module.exports = function(collection, ENV) {
       )
       .then(result => {
         // If we just completed the tenth round, end the game.
-        collection.findOne({ _id: gameId })
-        .then(game => {
-          if (game.rounds.length >= 10) {
-            collection.findOneAndUpdate(
-              { _id: gameId },
-              { $set: { gameEnded: true } },
-              { returnOriginal: false }
-            )
-            .then(result => res.status(200).send(result))
-            .catch(error => res.status(400).send(error))
-          } 
+        const { value } = result
+        if (value.rounds.length >= 10) {
+          collection.findOneAndUpdate(
+            { _id: gameId },
+            { $set: { gameEnded: true } },
+            { returnOriginal: false }
+          )
+          .then(result => res.status(200).send(result))
+          .catch(error => {console.log(error); res.status(400).send(error)})
+        } else {
           res.status(200).send(result)
-        })
-        .catch(error => res.status(400).send(error))
+        }
       })
-      .catch(error => res.status(400).send(error))
+      .catch(error => {console.log(error); res.status(400).send(error)})
   })
 
   // upload images

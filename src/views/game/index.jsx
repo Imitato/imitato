@@ -8,7 +8,7 @@ class Game extends Component {
   state = {
     gameId: '',
     rounds: [],
-    roundStarted: false,
+    gameState: 'roundNotStarted', // 'roundInProgress', 'gameCompleted'
     playerScores: {},
     players: [],
   }
@@ -24,7 +24,7 @@ class Game extends Component {
         axios
           .get('/imitato/game/start_round', query)
           .then(response => {
-            this.setState({ roundStarted: true })
+            this.setState({ gameState: 'roundInProgress'})
             this.socket.emit('start round')
           })
           .catch(error => console.error(error))
@@ -39,7 +39,7 @@ class Game extends Component {
       .get('/imitato/game/end_round', query)
       .then(response => {
         const data = response.data.value
-        const { rounds } = data
+        const { rounds, gameEnded } = data
         const submissions = rounds[rounds.length - 1].submissions
         const scores = Object.assign({}, this.state.playerScores)
         submissions.forEach(sub => {
@@ -53,9 +53,18 @@ class Game extends Component {
             scores[playerId] = [sub.score, sub.image]
           }
         })
-        this.setState({ roundStarted: false, playerScores: scores })
+        this.setState({playerScores: scores})
+        if (gameEnded) {
+          this.setState({gameState: 'gameCompleted'})
+        } else {
+          this.setState({gameState: 'roundNotStarted'})
+        }
       })
       .catch(error => console.log(error))
+  }
+
+  playAgain = () => {
+    location.reload()
   }
 
   rankedPlayers = scores => {
@@ -84,83 +93,113 @@ class Game extends Component {
   }
 
   render() {
+    let roundButtonComponent = null
+    let roundContentComponent = null
+    switch (this.state.gameState) {
+      case ('roundNotStarted'):
+        roundButtonComponent = (
+          <button onClick={this.createRound} className='red shiny-button'>
+            Start Round
+          </button>
+        )
+        roundContentComponent = (
+          <div/>
+        )
+        break
+      case ('roundInProgress'):
+        roundButtonComponent = (
+          <button onClick={this.endRound} className='red shiny-button'>
+            End Round
+          </button>
+        )
+        if (this.state.gameState == 'roundInProgress') {
+          roundContentComponent = (
+            <div>
+              <div style={{ marginBottom: '0.8em' }}>
+                Imitate These Emotions!
+              </div>
+              <div>{this.renderEmotionsList()}</div>
+              <div style={{ paddingBottom: '0.8em' }}>Rankings!</div>
+              <div className='ranking-images'>
+                {this.rankedPlayers(this.state.playerScores).map(
+                  (p, i) => {
+                    const player = p[0]
+                    const score = Number(p[1].toFixed(4))
+                    const dim = `${Math.round(324 * Math.pow(0.9, i))}px`
+                    return (
+                      <div className='ranking-image' key={i}>
+                        <img
+                          style={{ width: dim, height: dim }}
+                          src={`/images?id=` + p[2].filename}
+                        />
+                        <div>
+                          {player}'S SCORE: {score}
+                        </div>
+                        <div className='ranking-number'>{i + 1}</div>
+                      </div>
+                    )
+                  }
+                )}
+              </div>
+              <div className='confetti'>
+                {(() => {
+                  const confettiElems = []
+                  for (let i = 0; i < 13; i++) {
+                    confettiElems.push(
+                      <div key={i} className='confetti-piece' />
+                    )
+                  }
+                  return confettiElems
+                })()}
+              </div>
+            </div>
+          )
+        }
+        break
+      case ('gameCompleted'):
+        roundButtonComponent = (
+          <button onClick={this.playAgain} className='yellow shiny-button'>
+            Play Again
+          </button>
+        )
+        break
+      default:
+        roundButtonComponent = (
+          <button onClick={this.createRound} className='red shiny-button'>
+            Start Round
+          </button>
+        )
+        break
+    }
+
     return (
       <Styles>
-        <img className="title-image" src="images/imitato.png" />
-        <p className="description">
+        <img className='title-image' src='images/imitato.png'/>
+        <p className='description'>
           Play a game of Imitato, a fun game where you make faces with your
           friends to see who can match the emotions the best.
         </p>
-        <h4 className="game-code">Game Code: {this.state.gameId}</h4>
-        {!this.state.roundStarted ? (
-          <button onClick={this.createRound} className="red shiny-button">
-            Start Round
-          </button>
-        ) : (
-          <button onClick={this.endRound} className="red shiny-button">
-            End Round
-          </button>
-        )}
-        <div className="game-data">
-          <div className="players-container">
+        <h4 className='game-code'>
+          Game Code: {this.state.gameId}
+        </h4>
+        {roundButtonComponent}
+        <div className='game-data'>
+          <div className='players-container'>
             <h3>Players</h3>
             <div>{this.renderPlayersList()}</div>
           </div>
-          <div className="round-container">
-            {this.state.rounds.length === 0 ? (
-              <div>Waiting for round to start.</div>
-            ) : (
-              <>
-                <h3>Round {this.state.rounds.length}</h3>
-                {this.state.roundStarted ? (
-                  <>
-                    <div style={{ marginBottom: '0.8em' }}>
-                      Imitate These Emotions!
-                    </div>
-                    <div>{this.renderEmotionsList()}</div>
-                  </>
+          <div className='round-container'>
+            {
+              (this.state.rounds.length === 0) ?
+                (
+                  <div>Waiting for round to start.</div>
                 ) : (
-                  <>
-                    <div>{this.renderEmotionsList()}</div>
-                    <div style={{ paddingBottom: '0.8em' }}>Rankings!</div>
-                    <div className="ranking-images">
-                      {this.rankedPlayers(this.state.playerScores).map(
-                        (p, i) => {
-                          const player = p[0]
-                          const score = Number(p[1].toFixed(4))
-                          const dim = `${Math.round(324 * Math.pow(0.9, i))}px`
-                          return (
-                            <div className="ranking-image" key={i}>
-                              <img
-                                style={{ width: dim, height: dim }}
-                                src={`/images?id=` + p[2].filename}
-                              />
-                              <div>
-                                {player}'S SCORE: {score}
-                              </div>
-                              <div className="ranking-number">{i + 1}</div>
-                            </div>
-                          )
-                        }
-                      )}
-                    </div>
-                    {!this.state.roundStarted && (
-                      <div className="confetti">
-                        {(() => {
-                          const confettiElems = []
-                          for (let i = 0; i < 13; i++) {
-                            confettiElems.push(
-                              <div key={i} className="confetti-piece" />
-                            )
-                          }
-                          return confettiElems
-                        })()}
-                      </div>
-                    )}
-                  </>
-                )}
-              </>
-            )}
+                <>
+                  <h3>Round {this.state.rounds.length}</h3>
+                  {roundContentComponent}
+                </>
+              )
+            }
           </div>
         </div>
       </Styles>
@@ -184,7 +223,7 @@ class Game extends Component {
     for (const [emotion, value] of Object.entries(emotions_map)) {
       if (value > 0) {
         elements.push(
-          <span className="emotion" key={emotion}>
+          <span className='emotion' key={emotion}>
             {emotion}
           </span>
         )
