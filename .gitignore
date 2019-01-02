@@ -6,3 +6,11 @@ node_modules/
 .env
 uploads/
 dist/
+
+*.csr*
+*.key
+v3.ext
+.idea
+*.crt
+*.srl
+*.pem

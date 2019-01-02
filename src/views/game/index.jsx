@@ -8,7 +8,7 @@ class Game extends Component {
   state = {
     gameId: '',
     rounds: [],
-    gameState: 'roundNotStarted', // 'roundInProgress', 'gameCompleted'
+    gameState: 'gameNotStarted', // 'roundNotStarted', 'roundInProgress', 'gameCompleted'
     playerScores: {},
     players: [],
   }
@@ -96,7 +96,7 @@ class Game extends Component {
     let roundButtonComponent = null
     let roundContentComponent = null
     switch (this.state.gameState) {
-      case ('roundNotStarted'):
+      case ('gameNotStarted'):
         roundButtonComponent = (
           <button onClick={this.createRound} className='red shiny-button'>
             Start Round
@@ -104,6 +104,51 @@ class Game extends Component {
         )
         roundContentComponent = (
           <div/>
+        )
+        break
+      case ('roundNotStarted'):
+        roundButtonComponent = (
+          <button onClick={this.createRound} className='red shiny-button'>
+            Start Round
+          </button>
+        )
+        roundContentComponent = (
+          <div>
+            <div style={{ paddingBottom: '0.8em' }}>Rankings!</div>
+            <div>{this.renderEmotionsList()}</div>
+            <div className='ranking-images'>
+              {this.rankedPlayers(this.state.playerScores).map(
+                (p, i) => {
+                  const player = p[0]
+                  const score = Number(p[1].toFixed(4))*1000
+                  const dim = `324px`
+                  return (
+                    <div className='ranking-image' key={i}>
+                      <img
+                        style={{ width: dim, height: dim }}
+                        src={`/images?id=` + p[2].filename}
+                      />
+                      <div>
+                        {player}'S SCORE: {score}
+                      </div>
+                      <div className='ranking-number'>{i + 1}</div>
+                    </div>
+                  )
+                }
+              )}
+            </div>
+            <div className='confetti'>
+              {(() => {
+                const confettiElems = []
+                for (let i = 0; i < 13; i++) {
+                  confettiElems.push(
+                    <div key={i} className='confetti-piece' />
+                  )
+                }
+                return confettiElems
+              })()}
+            </div>
+          </div>
         )
         break
       case ('roundInProgress'):
@@ -119,39 +164,6 @@ class Game extends Component {
                 Imitate These Emotions!
               </div>
               <div>{this.renderEmotionsList()}</div>
-              <div style={{ paddingBottom: '0.8em' }}>Rankings!</div>
-              <div className='ranking-images'>
-                {this.rankedPlayers(this.state.playerScores).map(
-                  (p, i) => {
-                    const player = p[0]
-                    const score = Number(p[1].toFixed(4))
-                    const dim = `${Math.round(324 * Math.pow(0.9, i))}px`
-                    return (
-                      <div className='ranking-image' key={i}>
-                        <img
-                          style={{ width: dim, height: dim }}
-                          src={`/images?id=` + p[2].filename}
-                        />
-                        <div>
-                          {player}'S SCORE: {score}
-                        </div>
-                        <div className='ranking-number'>{i + 1}</div>
-                      </div>
-                    )
-                  }
-                )}
-              </div>
-              <div className='confetti'>
-                {(() => {
-                  const confettiElems = []
-                  for (let i = 0; i < 13; i++) {
-                    confettiElems.push(
-                      <div key={i} className='confetti-piece' />
-                    )
-                  }
-                  return confettiElems
-                })()}
-              </div>
             </div>
           )
         }
@@ -343,10 +355,6 @@ const Styles = styled.div`
     padding: 0 5px 5px;
     margin-bottom: 10px;
     width: fit-content;
-    cursor: pointer;
-    &:hover {
-      background: #fbbd06;
-    }
   }
 
   .winner {
