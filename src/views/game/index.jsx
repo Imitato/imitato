@@ -9,6 +9,7 @@ class Game extends Component {
     gameId: '',
     rounds: [],
     gameState: 'gameNotStarted', // 'roundNotStarted', 'roundInProgress', 'gameCompleted'
+    cumPlayerScores: {},
     playerScores: {},
     players: [],
   }
@@ -41,19 +42,21 @@ class Game extends Component {
         const data = response.data.value
         const { rounds, gameEnded } = data
         const submissions = rounds[rounds.length - 1].submissions
-        const scores = Object.assign({}, this.state.playerScores)
+        const cumScores = Object.assign({}, this.state.cumPlayerScores)
+        const roundScores = Object.assign({}, this.state.playerScores)
         submissions.forEach(sub => {
           const { playerId } = sub
-          if (playerId in scores) {
-            const old_score = scores[playerId][0]
-            const old_image = scores[playerId][1]
+          roundScores[playerId] = [sub.score, sub.image]
+          if (playerId in cumScores) {
+            const old_score = cumScores[playerId][0]
+            const old_image = cumScores[playerId][1]
 
-            scores[playerId] = [sub.score + old_score, sub.image]
+            cumScores[playerId] = [sub.score + old_score, sub.image]
           } else {
-            scores[playerId] = [sub.score, sub.image]
+            cumScores[playerId] = [sub.score, sub.image]
           }
         })
-        this.setState({playerScores: scores})
+        this.setState({playerScores: roundScores, cumPlayerScores: cumScores})
         if (gameEnded) {
           this.setState({gameState: 'gameCompleted'})
         } else {
@@ -114,7 +117,7 @@ class Game extends Component {
         )
         roundContentComponent = (
           <div>
-            <div style={{ paddingBottom: '0.8em' }}>Rankings!</div>
+            <div style={{ paddingBottom: '0.8em' }}>Top Scores!</div>
             <div>{this.renderEmotionsList()}</div>
             <div className='ranking-images'>
               {this.rankedPlayers(this.state.playerScores).map(
@@ -173,6 +176,38 @@ class Game extends Component {
           <button onClick={this.playAgain} className='yellow shiny-button'>
             Play Again
           </button>
+        )
+        roundContentComponent = (
+          <div>
+            <div style={{ paddingBottom: '0.8em' }}>Final Rankings!</div>
+            <div className='ranking-images'>
+              {this.rankedPlayers(this.state.cumPlayerScores).map(
+                (p, i) => {
+                  const player = p[0]
+                  const score = Number(p[1].toFixed(4))*1000
+                  return (
+                    <div className='ranking-image' key={i}>
+                      <div>
+                        {player}'S SCORE: {score}
+                      </div>
+                      <div className='ranking-number'>{i + 1}</div>
+                    </div>
+                  )
+                }
+              )}
+            </div>
+            <div className='confetti'>
+              {(() => {
+                const confettiElems = []
+                for (let i = 0; i < 13; i++) {
+                  confettiElems.push(
+                    <div key={i} className='confetti-piece' />
+                  )
+                }
+                return confettiElems
+              })()}
+            </div>
+          </div>
         )
         break
       default:
