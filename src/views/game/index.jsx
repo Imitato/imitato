@@ -185,8 +185,13 @@ class Game extends Component {
                 (p, i) => {
                   const player = p[0]
                   const score = Number(p[1].toFixed(4))*1000
+                  const dim = `324px`
                   return (
                     <div className='ranking-image' key={i}>
+                      <img
+                        style={{ width: dim, height: dim }}
+                        src="/images/happy-tomato.png"
+                      />
                       <div>
                         {player}'S SCORE: {score}
                       </div>
