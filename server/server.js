@@ -14,7 +14,7 @@ var ENV = {
   dbPass: process.env.DB_PASSWORD,
 }
 
-const DEV = true 
+const DEV = false
 if (DEV) {
   var certOptions = {
     key: fs.readFileSync(path.resolve('./server.key')),
